@@ -32,11 +32,11 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldNullEmailValidation() {
+    void shouldNotBlankEmailValidation() {
         Date birthday = new Date(0); // 1970-01-01
         User user = User.builder()
                 .id(1L)
-                //.email("test@mail.ru")
+                .email("    ")
                 .login("testUser")
                 .name("name")
                 .birthday(birthday)
@@ -44,7 +44,8 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException ex) {
-            assertEquals(ex.getMessage(),"email: не должно быть пустым");
+            assertEquals("email: Недопустимый email. Попробуйте снова., email: не должно быть пустым"
+                    ,ex.getMessage());
         }
     }
 
@@ -53,7 +54,7 @@ class UserControllerTest {
         Date birthday = new Date(0); // 1970-01-01
         User user = User.builder()
                 .id(1L)
-                .email("testmail.ru")
+                .email("testmail.ru@")
                 .login("testUser")
                 .name("name")
                 .birthday(birthday)
@@ -66,24 +67,24 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldNullLoginValidation() {
+    void shouldNotPassLoginValidation() {
         Date birthday = new Date(0); // 1970-01-01
         User user = User.builder()
                 .id(1L)
                 .email("test@mail.ru")
-                //.login("test User") // Login = null
+                .login("    ") // Login не должно быть пустым
                 .name("name")
                 .birthday(birthday)
                 .build();
         try {
             validateInput(user);
-        } catch (ConstraintViolationException ex) {
+        } catch (ConstraintViolationException  ex) {
             assertEquals(ex.getMessage(),"login: не должно быть пустым");
         }
     }
 
     @Test
-    void shouldNoPassLoginValidation() {
+    void shouldNoPass2LoginValidation() {
         Date birthday = new Date(0); // 1970-01-01
         User user = User.builder()
                 .email("test@mail.ru")
