@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
 
