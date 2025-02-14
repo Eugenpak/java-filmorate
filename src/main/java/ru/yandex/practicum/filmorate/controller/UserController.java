@@ -86,8 +86,7 @@ public class UserController {
             log.error("ValidationException id");
             throw new ValidationException("Id должен быть указан");
         }
-        if (getUserEmail(newUser.getEmail()) != null &&
-                getUserEmail(newUser.getEmail()).getId().longValue() != newUser.getId().longValue()) {
+        if (!newUser.getEmail().contains("@")) {
             log.error("ValidationException email");
             throw new ValidationException("Этот имейл уже используется");
         }
