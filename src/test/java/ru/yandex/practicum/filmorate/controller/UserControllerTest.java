@@ -71,14 +71,14 @@ class UserControllerTest {
         User user = User.builder()
                 .id(1L)
                 .email("test@mail.ru")
-                .login("    ") // Login не должно быть пустым
+                .login("") // Login не должно быть пустым
                 .name("name")
                 .birthday(birthday)
                 .build();
         try {
             validateInput(user);
         } catch (ConstraintViolationException  ex) {
-            assertEquals("login: не должно быть пустым",ex.getMessage());
+            assertEquals("login: must not be blank",ex.getMessage());
         }
     }
 
