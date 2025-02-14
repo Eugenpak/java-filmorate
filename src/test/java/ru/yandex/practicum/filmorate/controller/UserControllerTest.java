@@ -44,7 +44,7 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException ex) {
-            assertEquals("email: не должно быть пустым",ex.getMessage());
+            assertEquals("email: must not be blank",ex.getMessage());
         }
     }
 
