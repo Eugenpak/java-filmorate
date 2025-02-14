@@ -19,7 +19,7 @@ public class User {
     @NotBlank
     private String login; //— логин пользователя — login;
     private String name; //— имя для отображения — name;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday; //— дата рождения — birthday.
 }
 
