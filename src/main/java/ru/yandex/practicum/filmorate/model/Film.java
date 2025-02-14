@@ -22,8 +22,8 @@ public class Film {
     private String name;// - название —  name;
     @Size(min = 0, max = 200, message = "Описание фильма должно содержать до 200 символов")
     private String description;// - описание — description;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;// - дата релиза — releaseDate;
-    @Min(value=0, message = "Продолжительность фильма >= 0")
+    @Min(value = 0, message = "Продолжительность фильма >= 0")
     private Integer duration;// - продолжительность фильма — duration.
 }
