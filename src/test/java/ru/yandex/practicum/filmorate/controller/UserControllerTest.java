@@ -180,5 +180,4 @@ class UserControllerTest {
         assertEquals("Name after update",updateUser.getName());
         assertEquals(1,uc.findAll().size());
     }
-
 }

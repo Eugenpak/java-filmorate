@@ -25,7 +25,7 @@ class FilmControllerTest {
     }
 
     @BeforeEach
-    public void initEach(){
+    public void initEach() {
         Date releaseFilm = new Date(0); // 1970-01-01
         film = Film.builder()
                 .id(1L)
