@@ -16,8 +16,9 @@ import java.util.*;
 @Slf4j
 public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
-    private static final Date MY_CONSTANT = new GregorianCalendar(1895, Calendar.DECEMBER , 28)
+    private static final Date MY_CONSTANT = new GregorianCalendar(1895, Calendar.DECEMBER, 28)
             .getTime();
+
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Start Film findAll()");
