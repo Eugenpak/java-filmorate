@@ -52,7 +52,7 @@ public class FilmController {
 
         // сохраняем новую публикацию в памяти приложения
         films.put(film.getId(), film);
-        log.info("Новый фильм сохранен (id=" + film.getId() + ", email='" + film.getName() + "')");
+        log.info("Новый фильм сохранен (id=" + film.getId() + ", name='" + film.getName() + "')");
         return film;
     }
 
@@ -105,7 +105,7 @@ public class FilmController {
                 oldFilm.setDuration(newFilm.getDuration());
             }
             // если user найдена и все условия соблюдены, обновляем её содержимое
-            log.info("Данные фильма обновлены (id=" + oldFilm.getId() + ", email='" + oldFilm.getName() + "')");
+            log.info("Данные фильма обновлены (id=" + oldFilm.getId() + ", name='" + oldFilm.getName() + "')");
             return oldFilm;
         }
         throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");

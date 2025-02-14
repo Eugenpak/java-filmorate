@@ -36,7 +36,7 @@ class UserControllerTest {
         Date birthday = new Date(0); // 1970-01-01
         User user = User.builder()
                 .id(1L)
-                .email("    ")
+                .email("")
                 .login("testUser")
                 .name("name")
                 .birthday(birthday)
@@ -44,8 +44,7 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException ex) {
-            assertEquals("email: Недопустимый email. Попробуйте снова., email: не должно быть пустым",
-                    ex.getMessage());
+            assertEquals("email: не должно быть пустым",ex.getMessage());
         }
     }
 
@@ -79,7 +78,7 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException  ex) {
-            assertEquals(ex.getMessage(),"login: не должно быть пустым");
+            assertEquals("login: не должно быть пустым",ex.getMessage());
         }
     }
 
