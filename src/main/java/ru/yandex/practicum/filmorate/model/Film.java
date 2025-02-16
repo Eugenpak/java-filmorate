@@ -6,16 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Date;
 
-/**
- * Film.
- */
 @Data
 @Builder
-@Slf4j
 public class Film {
     private Long id;// - целочисленный идентификатор — id;
     @NotBlank(message = "Имя фильма обязательно")

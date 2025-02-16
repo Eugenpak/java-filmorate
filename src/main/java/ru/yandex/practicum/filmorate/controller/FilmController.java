@@ -30,26 +30,12 @@ public class FilmController {
         // проверяем выполнение необходимых условий
         log.info("Start Film create()");
         log.info("POST->Body Film = " + film);
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.error("ValidationException name");
-            throw new ValidationException("Название не может быть пустым");
-        }
-        if (film.getDescription().length() > 200) {
-            log.error("ValidationException description");
-            throw new ValidationException("Описание должно содержать до 200 символов");
-        }
-
         if (film.getReleaseDate().before(MY_CONSTANT)) {
             log.error("ValidationException releaseDate");
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года.");
         }
-        if (film.getDuration() < 0) {
-            log.error("ValidationException duration " + film.getDuration());
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
-        }
         // формируем дополнительные данные
         film.setId(getNextId());
-
         // сохраняем новую публикацию в памяти приложения
         films.put(film.getId(), film);
         log.info("Новый фильм сохранен (id=" + film.getId() + ", name='" + film.getName() + "')");
@@ -74,21 +60,9 @@ public class FilmController {
             log.error("ValidationException id");
             throw new ValidationException("Id должен быть указан");
         }
-        if (newFilm.getName().isBlank()) {
-            log.error("ValidationException name");
-            throw new ValidationException("Описание должно содержать до 200 символов");
-        }
-        if (newFilm.getDescription().length() > 200) {
-            log.error("ValidationException description");
-            throw new ValidationException("Описание должно содержать до 200 символов");
-        }
         if (newFilm.getReleaseDate().before(MY_CONSTANT)) {
             log.warn("ValidationException releaseDate");
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года.");
-        }
-        if (newFilm.getDuration() < 0) {
-            log.error("ValidationException duration");
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
         }
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
