@@ -27,6 +27,7 @@ class UserController2MockitoTest {
         return User.builder().id(1L).email("test@mail.ru").login("login")
                 .name("name").birthday(new Date(0)).build();
     }
+
     private User getTestNotValidUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
                 .name("name").birthday(new Date(10_000_000_000_000L)).build();
@@ -77,13 +78,13 @@ class UserController2MockitoTest {
     }
 
     @Test
-    void addFriend(){
+    void addFriend() {
         userController.addFriend(1,2);
         verify(userService, times(1)).addFriend(1,2);
     }
 
     @Test
-    void removeFromFriends(){
+    void removeFromFriends() {
         userController.removeFromFriends(1,2);
         verify(userService, times(1)).removeFromFriends(1,2);
     }
