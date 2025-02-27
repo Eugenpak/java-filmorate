@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,4 +22,5 @@ public class Film {
     private Date releaseDate;// - дата релиза — releaseDate;
     @Min(value = 0, message = "Продолжительность фильма >= 0")
     private Integer duration;// - продолжительность фильма — duration.
+    private final Set<Long> likes  = new HashSet<>();
 }
