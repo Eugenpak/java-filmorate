@@ -61,13 +61,13 @@ public class UserService {
             log.error("ValidationException id");
             throw new ValidationException("Id должен быть указан");
         }
-        if (!newUser.getEmail().contains("@")) {
+        if (!newUser.getEmail().contains("@")) { //
             log.error("ValidationException email");
-            throw new ValidationException("Этот имейл уже используется");
+            throw new ValidationException("Этот имейл неправильного формат");
         }
         User oldUser = findUserById(newUser.getId());
 
-        if (newUser.getEmail() != null) {
+        if (newUser.getEmail() != null && !checkEmail(newUser,findAll())) {
                 oldUser.setEmail(newUser.getEmail());
         }
         if (newUser.getLogin() != null) {
@@ -78,8 +78,15 @@ public class UserService {
         }
         // если user найдена и все условия соблюдены, обновляем её содержимое
         oldUser.setBirthday(newUser.getBirthday());
-        log.info("Данные пользователя обновляются (id=" + newUser.getId() + ", email='" + newUser.getEmail() + "')");
+        log.info("Данные пользователя обновляются (id=" + oldUser.getId() + ", email='" + oldUser.getEmail() + "')");
         return userStorage.update(oldUser);
+    }
+
+    private boolean checkEmail(User user, Collection<User> userCollection) {
+        return userCollection
+                .stream()
+                .filter(u -> u.getEmail().equals(user.getEmail())) // Фильтруем по email
+                .anyMatch(u -> u.getId() != user.getId()); // Проверяем, что это не тот же самый пользователь
     }
 
     public User findUserById(long id) {

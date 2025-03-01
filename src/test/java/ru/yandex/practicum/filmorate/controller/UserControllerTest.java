@@ -222,4 +222,33 @@ class UserControllerTest {
         assertEquals("Name after update",updateUser.getName());
         assertEquals(1,uc.findAll().size());
     }
+
+    @Test
+    void updateUserCheckMail() {
+        Date birthday = new Date(0L); // 1970-01-01
+        User user = User.builder().login("testLogin").name("testName").birthday(birthday)
+                .email("test@mail.ru").build();
+        User userOther = User.builder().login("Login-2").name("Name-2").birthday(birthday)
+                .email("test_m@mail.ru").build();
+
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
+
+        User savedUser = uc.create(user);
+        uc.create(userOther);
+        User modifiedUser = User.builder()
+                .id(1L)
+                .email("test_m@mail.ru") //update@mail.ru
+                .login("testLogin")
+                .name("Name after update")
+                .birthday(birthday)
+                .build();
+        final User updateUser = uc.update(modifiedUser);
+        assertEquals(updateUser,savedUser);
+        assertEquals(1,updateUser.getId());
+        assertNotEquals("test_m@mail.ru",updateUser.getEmail());
+        assertEquals("Name after update",updateUser.getName());
+        assertEquals(2,uc.findAll().size());
+    }
 }
