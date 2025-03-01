@@ -1,12 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +77,13 @@ class FilmControllerTest {
         Date releaseFilm = new Date(-10_000_000_000_000L);
         film.setId(null);
         film.setReleaseDate(releaseFilm);
-        FilmController fc = new FilmController();
+
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        FilmService filmService = new FilmService(filmStorage,userService);
+
+        FilmController fc = new FilmController(filmService);
         try {
            fc.create(film);
         } catch (ValidationException ex) {
@@ -91,7 +103,13 @@ class FilmControllerTest {
 
     @Test
     void findAll() {
-        FilmController fc = new FilmController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        FilmService filmService = new FilmService(filmStorage,userService);
+
+        FilmController fc = new FilmController(filmService);
+
         film.setId(null);
         fc.create(film);
 
@@ -101,7 +119,13 @@ class FilmControllerTest {
 
     @Test
     void createFilm() {
-        FilmController fc = new FilmController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        FilmService filmService = new FilmService(filmStorage,userService);
+
+        FilmController fc = new FilmController(filmService);
+
         film.setId(null);
         Film createdFilm = fc.create(film);
         assertEquals(1,createdFilm.getId());
@@ -112,7 +136,13 @@ class FilmControllerTest {
 
     @Test
     void updateFilm() {
-        FilmController fc = new FilmController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        FilmService filmService = new FilmService(filmStorage,userService);
+
+        FilmController fc = new FilmController(filmService);
+
         film.setId(null);
         Film savedFilm = fc.create(film);
 

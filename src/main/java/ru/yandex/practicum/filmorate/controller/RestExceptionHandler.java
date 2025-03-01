@@ -14,13 +14,13 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 @Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorMessage> catchValidationException(ValidationException e) {
+    public ResponseEntity<ErrorMessage> handleValidationException(ValidationException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ErrorMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorMessage> catchNotFoundException(NotFoundException e) {
+    public ResponseEntity<ErrorMessage> handleNotFoundException(NotFoundException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ErrorMessage(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
