@@ -2,9 +2,17 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.Date;
 import java.util.Collection;
@@ -12,8 +20,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT) //RANDOM_PORT
 class UserControllerTest {
+    @Autowired
+    TestRestTemplate template;
+
     void validateInput(User user) throws ConstraintViolationException {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -24,8 +35,26 @@ class UserControllerTest {
     }
 
     @Test
+    void probaAwa() {
+        ResponseEntity<User[]> entity = template.getForEntity("/users", User[].class);
+
+        assertEquals(HttpStatus.OK,entity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON,entity.getHeaders().getContentType());
+
+        User[] users = entity.getBody();
+    }
+
+    @Test
+    void invalidUserIdShouldReturn404() {
+        User entity = template.getForObject("/users/99", User.class);
+        //assertEquals(HttpStatus.NOT_FOUND, entity.getStatusCode());
+    }
+
+    @Test
     void findAll() {
-        UserController uc = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
 
         Collection<User> response = uc.findAll();
         assertEquals(0,response.size());
@@ -92,7 +121,9 @@ class UserControllerTest {
                 .birthday(birthday)
                 .build();
 
-        UserController uc = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
 
         try {
             uc.create(user);
@@ -110,8 +141,10 @@ class UserControllerTest {
                 .name("") // name не может быть пустым
                 .birthday(birthday)
                 .build();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
 
-        UserController uc = new UserController();
         User createdUser = uc.create(user);
         assertEquals("testUser",createdUser.getName());
         assertEquals(1,createdUser.getId());
@@ -127,7 +160,10 @@ class UserControllerTest {
                 .birthday(birthday)
                 .build();
 
-        UserController uc = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
+
         try {
             uc.create(user);
         } catch (ValidationException ex) {
@@ -145,13 +181,16 @@ class UserControllerTest {
                 .birthday(birthday)
                 .build();
 
-        UserController uc = new UserController();
-        User createdUser = uc.create(user);
-        assertEquals(1,createdUser.getId());
-        assertEquals("test@mail.ru",createdUser.getEmail());
-        assertEquals("testLogin",createdUser.getLogin());
-        assertEquals("testName",createdUser.getName());
-        assertEquals(birthday,createdUser.getBirthday());
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
+
+        User createdUserT = uc.create(user);
+        assertEquals(1,createdUserT.getId());
+        assertEquals("test@mail.ru",createdUserT.getEmail());
+        assertEquals("testLogin",createdUserT.getLogin());
+        assertEquals("testName",createdUserT.getName());
+        assertEquals(birthday,createdUserT.getBirthday());
     }
 
     @Test
@@ -164,7 +203,10 @@ class UserControllerTest {
                 .birthday(birthday)
                 .build();
 
-        UserController uc = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
+
         User savedUser = uc.create(user);
         User modifiedUser = User.builder()
                 .id(1L)
@@ -179,5 +221,34 @@ class UserControllerTest {
         assertEquals("update@mail.ru",updateUser.getEmail());
         assertEquals("Name after update",updateUser.getName());
         assertEquals(1,uc.findAll().size());
+    }
+
+    @Test
+    void updateUserCheckMail() {
+        Date birthday = new Date(0L); // 1970-01-01
+        User user = User.builder().login("testLogin").name("testName").birthday(birthday)
+                .email("test@mail.ru").build();
+        User userOther = User.builder().login("Login-2").name("Name-2").birthday(birthday)
+                .email("test_m@mail.ru").build();
+
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        UserController uc = new UserController(userService);
+
+        User savedUser = uc.create(user);
+        uc.create(userOther);
+        User modifiedUser = User.builder()
+                .id(1L)
+                .email("test_m@mail.ru") //update@mail.ru
+                .login("testLogin")
+                .name("Name after update")
+                .birthday(birthday)
+                .build();
+        final User updateUser = uc.update(modifiedUser);
+        assertEquals(updateUser,savedUser);
+        assertEquals(1,updateUser.getId());
+        assertNotEquals("test_m@mail.ru",updateUser.getEmail());
+        assertEquals("Name after update",updateUser.getName());
+        assertEquals(2,uc.findAll().size());
     }
 }

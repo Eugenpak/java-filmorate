@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -19,6 +21,7 @@ public class User {
     private String name; //— имя для отображения — name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday; //— дата рождения — birthday.
+    private final Set<Long> friends  = new HashSet<>();
 }
 
 
