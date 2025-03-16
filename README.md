@@ -111,7 +111,7 @@ SET email    = ?,
     login    = ?,
     name     = ?,
     birthday = ?
-WHERE user_id = ?
+WHERE id = ?
 ```
 
 * `Получение` пользователя `по идентификатору`:
@@ -119,7 +119,7 @@ WHERE user_id = ?
 ```SQL
 SELECT *
 FROM users
-WHERE user_id = ?
+WHERE id = ?
 ```   
 
 * `Получение всех` пользователей:
@@ -128,6 +128,25 @@ WHERE user_id = ?
 SELECT *
 FROM users
 ``` 
+
+* `Получение списка друзей` пользователя:
+
+```SQL
+SELECT *
+FROM users u
+WHERE u.id in (SELECT f.friend_id FROM friends as f WHERE f.user_id =2)
+```
+
+* `Получение общего списка друзей` между пользователем (id) и его другом(friend_id):
+
+```SQL
+SELECT *
+FROM users
+WHERE id IN (SELECT str1.friends_id
+			FROM (select f.friend_id FROM friends as f WHERE f.user_id =2) str1
+			JOIN (select f.friend_id FROM friends as f WHERE f.user_id =1) str2 on str1.friend_id = str2.friend_id)
+``` 
+
 
 </details>
 
