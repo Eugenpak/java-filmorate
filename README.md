@@ -67,6 +67,20 @@ FROM films f
 GROUP BY f.id;
 ```
 
+* `Добавить лайк` к фильму:
+
+```SQL
+INSERT INTO likes (film_id,                   
+                   user_id)
+VALUES (?, ?);
+```
+
+* `Удалить лайк` к фильму:
+
+```SQL
+DELETE FROM likes WHERE film_id = ? AND user_id = ?;
+```
+
 * `Получение топ-N (по количеству лайков)` фильмов:
 ```SQL
 SELECT f.id,
@@ -135,6 +149,20 @@ FROM users
 SELECT *
 FROM users u
 WHERE u.id in (SELECT f.friend_id FROM friends as f WHERE f.user_id =2)
+```
+
+* `Добавить друга` у пользователя:
+
+```SQL
+INSERT INTO friends (user_id,
+                     friend_id)
+VALUES (?, ?)
+```
+
+* `Удалить друга` у пользователя:
+
+```SQL
+DELETE FROM friends WHERE user_id = ? AND friend_id = ?
 ```
 
 * `Получение общего списка друзей` между пользователем (id) и его другом(friend_id):
