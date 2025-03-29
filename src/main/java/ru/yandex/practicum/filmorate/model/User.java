@@ -3,14 +3,19 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.Date;
+
+
+@Builder(toBuilder = true)
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     private Long id; //— уникальный идентификатор пользователя
     @NotBlank(message = "must not be blank")
@@ -20,8 +25,8 @@ public class User {
     private String login; //— логин пользователя — login;
     private String name; //— имя для отображения — name;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date birthday; //— дата рождения — birthday.
-    private final Set<Long> friends  = new HashSet<>();
+    private LocalDate birthday; //— дата рождения — birthday.
+    //private final Set<Long> friends  = new HashSet<>();
 }
 
 
