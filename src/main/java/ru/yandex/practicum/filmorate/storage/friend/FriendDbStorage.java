@@ -31,26 +31,26 @@ public class FriendDbStorage extends BaseDbStorage<User>  implements FriendStora
     @Override
     public Collection<User> getFriendsAll(long userId) {
         log.debug("FriendDbStorage getFriendsAll(userId:{}).", userId);
-        return findMany(FIND_ALL_QUERY,userId);
+        return findMany(FIND_ALL_QUERY, userId);
     }
 
     @Override
     public Collection<User> getFriendsCommon(long userId,long otherId) {
-        log.debug("FriendDbStorage getFriendsCommon(userId:{},otherId:{}).", userId,otherId);
-        return findMany(FIND_COMMON_FRIENDS_ID_OTHERID_QUERY,userId,otherId);
+        log.debug("FriendDbStorage getFriendsCommon(userId:{},otherId:{}).", userId, otherId);
+        return findMany(FIND_COMMON_FRIENDS_ID_OTHERID_QUERY, userId, otherId);
     }
 
     @Override
     public boolean addFriend(long userId,long friendId) {
-        log.debug("FriendDbStorage addFriend(userId:{},friendId:{}).", userId,friendId);
-        int rowsAdd = jdbc.update(INSERT_QUERY, userId,friendId);
+        log.debug("FriendDbStorage addFriend(userId:{},friendId:{}).", userId, friendId);
+        int rowsAdd = jdbc.update(INSERT_QUERY, userId, friendId);
         return rowsAdd > 0;
     }
 
     @Override
     public boolean removeFromFriends(long userId,long friendId) {
-        log.debug("FriendDbStorage removeFromFriends(userId:{},friendId:{}).", userId,friendId);
-        int rowsDeleted = jdbc.update(DELETE_QUERY, userId,friendId);
+        log.debug("FriendDbStorage removeFromFriends(userId:{},friendId:{}).", userId, friendId);
+        int rowsDeleted = jdbc.update(DELETE_QUERY, userId, friendId);
         return rowsDeleted > 0;
     }
 }

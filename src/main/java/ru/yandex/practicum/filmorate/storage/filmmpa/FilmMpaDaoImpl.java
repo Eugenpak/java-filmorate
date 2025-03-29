@@ -36,7 +36,7 @@ public class FilmMpaDaoImpl implements FilmMpaDao {
     @Override
     public void add(long filmId, long mpaId) {
         log.debug("FilmMpaDaoImpl add({}, {}).", filmId, mpaId);
-        int rowsAdd = jdbcTemplate.update(INSERT_QUERY , filmId, mpaId);
+        int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, mpaId);
         log.trace("Фильму ID_{} добавлен рейтинг ID_{}.", filmId, mpaId);
     }
 
