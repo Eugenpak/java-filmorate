@@ -43,7 +43,7 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
     @Override
     public void addSet(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl addSet({}, {}).", filmId, genres);
-        for(Genre el: genres) {
+        for (Genre el: genres) {
             int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, el.getId());
         }
         log.trace("Фильму ID_{} добавлены жанры {}.", filmId, genres);
