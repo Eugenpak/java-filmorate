@@ -75,7 +75,16 @@ public class UserController {
     @GetMapping(value = "/{id}")
     public User findUserById(@NotNull @PathVariable long id) {
         log.info("UC User findUserById(id=" + id + ")");
-        return userService.findUserById(id);
+        User findUser = userService.findUserById(id);
+        log.info("UC findUser: " + findUser);
+        return findUser;
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void delUserById(@NotNull @PathVariable long id) {
+        log.info("UC User delUserById(id=" + id + ")");
+        userService.delUserById(id);
+        log.info("UC delUserById(id=" + id + ") удален!");
     }
 }
 

@@ -27,6 +27,12 @@ public class FilmController {
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Start Film findAll()");
+        //return filmService.findAll();
+        /*Collection<Film> filmList = filmService.findAll();
+        for(Film el : filmList) {
+            //System.out.println("id=" + el.getId() + " realesDate=" + el.getReleaseDate());
+            System.out.println("FC-findAll " + el);
+        } */
         return filmService.findAll();
     }
 
@@ -39,6 +45,7 @@ public class FilmController {
         // сохраняем новую публикацию в памяти приложения
         final Film createdFilm = filmService.create(film);
         log.info("Новый фильм сохранен (id=" + createdFilm.getId() + ", name='" + createdFilm.getName() + "')");
+        System.out.println("FC-create " + createdFilm);
         return createdFilm;
     }
 
