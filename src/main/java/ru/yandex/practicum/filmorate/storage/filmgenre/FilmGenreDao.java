@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.filmgenre;
 
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.Collection;
 import java.util.Set;
 
 public interface FilmGenreDao {
