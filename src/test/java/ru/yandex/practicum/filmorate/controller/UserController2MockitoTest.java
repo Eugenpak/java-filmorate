@@ -26,7 +26,7 @@ class UserController2MockitoTest {
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday( LocalDate.of(1970,1,1)).build();
+                .name("name").birthday(LocalDate.of(1970,1,1)).build();
     }
 
     private User getTestNotValidUser() {
