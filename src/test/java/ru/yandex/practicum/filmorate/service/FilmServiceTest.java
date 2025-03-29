@@ -7,9 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,12 +29,12 @@ class FilmServiceTest {
 
     private Film getTestFilm() {
         return Film.builder().id(1L).name("name фильма").description("описание фильма")
-                .releaseDate(new Date(0L)).duration(100).build();
+                .releaseDate(LocalDate.of(1970,1,1)).duration(100).build();
     }
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(new Date(0)).build();
+                .name("name").birthday(LocalDate.of(1970,1,1)).build();
     }
 
 
@@ -63,7 +64,7 @@ class FilmServiceTest {
     @Test void update() {
         Film expectedFilm = getTestFilm();
         when(filmStorage.update(expectedFilm)).thenReturn(expectedFilm);
-        when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
 
         Film actualFilm = filmService.update(expectedFilm);
 
@@ -74,7 +75,7 @@ class FilmServiceTest {
 
     @Test void addLike() {
         Film expectedFilm = getTestFilm();
-        when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
         User expectedUser = getTestUser();
         when(userService.findUserById(1)).thenReturn(expectedUser);
 
@@ -86,7 +87,7 @@ class FilmServiceTest {
 
     @Test void deleteLike() {
         Film expectedFilm = getTestFilm();
-        when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
         User expectedUser = getTestUser();
         when(userService.findUserById(1)).thenReturn(expectedUser);
 
@@ -108,7 +109,7 @@ class FilmServiceTest {
 
     @Test void findFilmById() {
         Film expectedFilm = getTestFilm();
-        when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
 
         Film actualFilm = filmService.findFilmById(1);
 
