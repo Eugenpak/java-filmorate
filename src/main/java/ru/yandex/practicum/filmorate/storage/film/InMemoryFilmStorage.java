@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -38,22 +38,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmById(long id) {
-        if (films.containsKey(id)) {
-            return films.get(id);
-        }
-        return null;
+    public Optional<Film> findFilmById(long id) {
+        return Optional.ofNullable(films.get(id));
     }
 
     @Override
     public void addLike(long filmId, long userId) {
-        Film film = findFilmById(filmId);
-        film.getLikes().add(userId);
+        Optional<Film> film = findFilmById(filmId);
+        //film.get().getLikes().add(userId);
     }
 
     @Override
     public void deleteLike(long filmId, long userId) {
-        Film film = findFilmById(filmId);
-        film.getLikes().remove(userId);
+        Optional<Film> film = findFilmById(filmId);
+       // film.getLikes().remove(userId);
     }
+
+    @Override
+    public List<Film> getPopularFilms(int count) { return null;}
 }
