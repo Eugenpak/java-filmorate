@@ -8,15 +8,13 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.sql.Date;
+import ru.yandex.practicum.filmorate.model.User;
+
+
+
 import java.time.LocalDate;
-import java.util.Collection;
+
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
