@@ -1,12 +1,14 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
-@Component("inMemoryUserStorage")
+@Component
+@Qualifier("inMemoryUserStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
@@ -43,41 +45,53 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(long id) {
+    public Optional<User> findUserById(long id) {
         if (users.containsKey(id)) {
-            return users.get(id);
+            return Optional.of(users.get(id));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public void addFriend(long userId, long friendId) {
+        /*
         User user = findUserById(userId);
         user.getFriends().add(friendId);
         User friend = findUserById(friendId);
         friend.getFriends().add(userId);
+        */
     }
 
     @Override
     public void removeFromFriends(long userId, long friendId) {
+        /*
         User user = findUserById(userId);
         User friend = findUserById(friendId);
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
-
+        */
     }
 
     @Override
     public Collection<User> getAllFriends(long userId) {
-        return users.get(userId).getFriends().stream().map(users::get).toList();
+        //return users.get(userId).getFriends().stream().map(users::get).toList();
+        return null;
     }
 
     @Override
     public Collection<User> getCommonFriends(long userId,long otherId) {
+        /*
         Set<Long> result = new HashSet<>(findUserById(userId).getFriends());
         log.info("InMemoryUS User getCommonFriends(userId)=" + result);
         result.retainAll(findUserById(otherId).getFriends());
         log.info("InMemoryUS User getCommonFriends(otherId)=" + findUserById(otherId).getFriends());
         return result.stream().map(users::get).toList();
+        */
+        return null;
+    }
+
+    @Override
+    public boolean delUserById(long id) {
+        return false;
     }
 }
