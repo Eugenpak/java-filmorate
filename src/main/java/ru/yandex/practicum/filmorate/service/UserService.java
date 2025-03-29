@@ -2,23 +2,28 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
-import java.time.Instant;
+import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserService {
+
     private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage,FriendStorage friendStorage) {
         this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
     }
 
     public Collection<User> findAll() {
@@ -42,7 +47,7 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        if (user.getBirthday() == null || user.getBirthday().after(Date.from(Instant.now()))) {
+        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             String str = "Дата рождения не может быть в будущем.";
             log.error(str);
             throw new ValidationException(str);
@@ -55,7 +60,7 @@ public class UserService {
 
     public User update(User newUser) {
         // проверяем необходимые условия
-        log.info("Start User update()");
+        log.info("Start U-S update()");
         log.info("PUT->Body User = " + newUser);
         if (newUser.getId() == null) {
             log.error("ValidationException id");
@@ -90,37 +95,50 @@ public class UserService {
     }
 
     public User findUserById(long id) {
-        User findUser = userStorage.findUserById(id);
-        if (findUser == null) {
+        Optional<User> findUser = userStorage.findUserById(id);
+        if (findUser.isEmpty()) {
             throw new NotFoundException("Пользователь с id = " + id + " не найден");
         }
-        return findUser;
+        return findUser.get();
+    }
+
+    public void delUserById(long id) {
+        log.info("Start U-S delUserById({})",id);
+        boolean delUser = userStorage.delUserById(id);
+        if (!delUser) {
+            throw new NotFoundException("Пользователь с id = " + id + " не найден");
+        }
+        log.info("Удален User delUserById({})",id);
     }
 
     public void addFriend(long userId,long friendId) {
+        log.info("Start U-S addFriend(userId:{},friendId:{})",userId,friendId);
         final User user = findUserById(userId);
         final User friend = findUserById(friendId);
-        userStorage.addFriend(userId,friendId);
+        friendStorage.addFriend(userId,friendId);
         log.info("Service user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> addFriend()");
     }
 
     public void removeFromFriends(long userId,long friendId) {
+        log.info("Start U-S removeFromFriends(userId:{},friendId:{})",userId,friendId);
         final User user = findUserById(userId);
         final User friend = findUserById(friendId);
-        userStorage.removeFromFriends(userId,friendId);
-        log.info("Service user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
+        friendStorage.removeFromFriends(userId,friendId);
+        log.info("U-S удален друг user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> removeFromFriends()");
     }
 
     public Collection<User> getAllFriends(long userId) {
+        log.info("Start U-S getAllFriends(userId:{})",userId);
         findUserById(userId);
-        return userStorage.getAllFriends(userId);
+        return friendStorage.getFriendsAll(userId);
     }
 
     public Collection<User> getCommonFriends(long userId,long otherId) {
+        log.info("Start U-S getCommonFriends(userId:{},otherId:{})",userId,otherId);
         findUserById(userId);
         findUserById(otherId);
-        return userStorage.getCommonFriends(userId,otherId);
+        return friendStorage.getFriendsCommon(userId,otherId);
     }
 }
