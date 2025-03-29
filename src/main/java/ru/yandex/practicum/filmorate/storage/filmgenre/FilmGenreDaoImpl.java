@@ -35,16 +35,16 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
 
     @Override
     public void add(long filmId, long genreId) {
-        log.debug("FilmGenreDaoImpl add({}, {}).", filmId, genreId);
-        int rowsAdd = jdbcTemplate.update(INSERT_QUERY , filmId, genreId);
-        log.trace("Фильму ID_{} добавлен жанр ID_{}.",filmId, genreId);
+        log.debug("FilmGenreDaoImpl add({}, {}).",filmId, genreId);
+        int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, genreId);
+        log.trace("Фильму ID_{} добавлен жанр ID_{}.", filmId, genreId);
     }
 
     @Override
     public void addSet(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl addSet({}, {}).", filmId, genres);
-        for(Genre el : genres) {
-            int rowsAdd = jdbcTemplate.update(INSERT_QUERY , filmId, el.getId());
+        for(Genre el: genres) {
+            int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, el.getId());
         }
         log.trace("Фильму ID_{} добавлены жанры {}.", filmId, genres);
     }
