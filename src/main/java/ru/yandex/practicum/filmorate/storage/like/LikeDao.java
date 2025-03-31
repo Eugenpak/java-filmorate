@@ -9,4 +9,6 @@ public interface LikeDao {
     void delete(long filmId, long userId);
 
     Collection<PopularFilm> findPopularFilmsId(int count);
+
+    void deleteAllPopularFilms();
 }

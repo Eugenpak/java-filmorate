@@ -17,6 +17,9 @@ public class LikeDaoImpl implements LikeDao {
             "VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM likes WHERE film_id = ?" +
             " AND user_id = ?";
+
+    private static final String DELETE_ALL_QUERY = "DELETE FROM likes";
+
     private static final String FIND_POPULAR_FILM_QUERY = "SELECT film_id, " +
             "COUNT(user_id) AS like_count FROM likes GROUP BY film_id " +
             "ORDER BY like_count DESC LIMIT ?";
@@ -45,5 +48,12 @@ public class LikeDaoImpl implements LikeDao {
     public Collection<PopularFilm> findPopularFilmsId(int count) {
         log.debug("LikeDaoImpl findPopularFilmsId().");
         return jdbcTemplate.query(FIND_POPULAR_FILM_QUERY, mapperPop,count);
+    }
+
+    @Override
+    public void deleteAllPopularFilms() {
+        log.debug("LikeDaoImpl deleteAllPopularFilms().");
+        jdbcTemplate.update(DELETE_ALL_QUERY);
+        log.trace("Список популярных фильмов удалён.");
     }
 }
