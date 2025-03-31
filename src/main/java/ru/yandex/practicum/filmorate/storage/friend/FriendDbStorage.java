@@ -20,7 +20,7 @@ public class FriendDbStorage extends BaseDbStorage<User>  implements FriendStora
             "ON str1.friend_id = str2.friend_id)";
     private static final String INSERT_QUERY = "INSERT INTO friends (user_id,friend_id) " +
             "VALUES (?, ?)";
-    private static final String UPDATE_QUERY = "";
+    private static final String DELETE_ALL_QUERY = "DELETE FROM friends";
     private static final String DELETE_QUERY = "DELETE FROM friends WHERE user_id = ? " +
             "AND friend_id = ?";
 
@@ -51,6 +51,13 @@ public class FriendDbStorage extends BaseDbStorage<User>  implements FriendStora
     public boolean removeFromFriends(long userId,long friendId) {
         log.debug("FriendDbStorage removeFromFriends(userId:{},friendId:{}).", userId, friendId);
         int rowsDeleted = jdbc.update(DELETE_QUERY, userId, friendId);
+        return rowsDeleted > 0;
+    }
+
+    @Override
+    public boolean delAllFriends() {
+        log.debug("FriendDbStorage delAllFriends().");
+        int rowsDeleted = jdbc.update(DELETE_ALL_QUERY);
         return rowsDeleted > 0;
     }
 }

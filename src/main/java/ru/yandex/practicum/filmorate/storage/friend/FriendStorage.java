@@ -11,6 +11,8 @@ public interface FriendStorage {
     boolean removeFromFriends(long userId,long friendId);
 
     boolean addFriend(long userId,long friendId);
+
+    boolean delAllFriends();
 }
 
 
