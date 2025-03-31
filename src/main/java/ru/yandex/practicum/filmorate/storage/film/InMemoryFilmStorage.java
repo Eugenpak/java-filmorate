@@ -58,4 +58,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getPopularFilms(int count) {
         return null;
     }
+
+    @Override
+    public boolean deleteAll() {
+        return false;
+    }
+
+    @Override
+    public boolean delByFilmId(long id)  {
+        return false;
+    }
 }

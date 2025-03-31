@@ -33,6 +33,8 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?" +
             " WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM films WHERE id = ?";
+
+    private static final String DELETE_ALL_QUERY = "DELETE FROM films";
     private final FilmMpaDao filmMpaDao;
     private final FilmGenreDao filmGenreDao;
     private final MpaStorage mpaStorage;
@@ -154,5 +156,18 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         return likeDao.findPopularFilmsId(count).stream()
                 .map(p -> findFilmById(p.getFilmId()).get())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteAll() {
+        log.info("FilmDbStorage start deleteAll()");
+        int rowsDeleted = jdbc.update(DELETE_ALL_QUERY);
+        return rowsDeleted > 0;
+    }
+
+    @Override
+    public boolean delByFilmId(long id) {
+        log.info("FilmDbStorage start delByFilmId({})",id);
+        return delete(DELETE_QUERY, id);
     }
 }
