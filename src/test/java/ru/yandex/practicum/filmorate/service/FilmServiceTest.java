@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -62,38 +63,33 @@ class FilmServiceTest {
     }
 
     @Test void update() {
-        /*
         Film expectedFilm = getTestFilm();
         when(filmStorage.update(expectedFilm)).thenReturn(expectedFilm);
-        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));
 
         Film actualFilm = filmService.update(expectedFilm);
 
         verify(filmStorage, times(1)).update(expectedFilm);
+        verify(filmStorage, times(1)).findFilmById(expectedFilm.getId());
         assertEquals(expectedFilm.getName(), actualFilm.getName());
         assertSame(expectedFilm, actualFilm);
-
-         */
     }
 
     @Test void addLike() {
-        /*
         Film expectedFilm = getTestFilm();
-        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        when(filmStorage.findFilmById(1)).thenReturn(Optional.of(expectedFilm));
         User expectedUser = getTestUser();
-        when(userService.findUserById(1)).thenReturn(expectedUser);
+        when(userService.findUserById(expectedUser.getId())).thenReturn(expectedUser);
 
         filmService.addLike(1,1);
         verify(filmStorage, times(1)).addLike(1,1);
         verify(filmStorage, times(1)).findFilmById(1);
         verify(userService, times(1)).findUserById(1);
-        */
     }
 
     @Test void deleteLike() {
-        /*
         Film expectedFilm = getTestFilm();
-        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));
         User expectedUser = getTestUser();
         when(userService.findUserById(1)).thenReturn(expectedUser);
 
@@ -101,33 +97,27 @@ class FilmServiceTest {
         verify(filmStorage, times(1)).deleteLike(1,1);
         verify(filmStorage, times(1)).findFilmById(1);
         verify(userService, times(1)).findUserById(1);
-        */
     }
 
     @Test void getPopularFilms() {
-        /*
+        int count = 10;
         List<Film> expectedFilms = List.of(getTestFilm());
-        when(filmStorage.findAll()).thenReturn(expectedFilms);
+        when(filmStorage.getPopularFilms(count)).thenReturn(expectedFilms);
 
-        List<Film> actualFilms = filmService.getPopularFilms(10).stream().toList();
-        verify(filmStorage, times(1)).findAll();
+        List<Film> actualFilms = filmService.getPopularFilms(count).stream().toList();
+        verify(filmStorage, times(1)).getPopularFilms(count);
         assertEquals(expectedFilms.size(), actualFilms.size());
         assertSame(expectedFilms.get(0), actualFilms.get(0));
-
-         */
     }
 
     @Test void findFilmById() {
-        /*
         Film expectedFilm = getTestFilm();
-        //when(filmStorage.findFilmById(1)).thenReturn(expectedFilm);
+        when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));
 
-        Film actualFilm = filmService.findFilmById(1);
+        Film actualFilm = filmService.findFilmById(expectedFilm.getId());
 
-        verify(filmStorage, times(1)).findFilmById(1);
+        verify(filmStorage, times(1)).findFilmById(expectedFilm.getId());
         assertEquals(expectedFilm.getName(), actualFilm.getName());
         assertSame(expectedFilm, actualFilm);
-
-         */
     }
 }

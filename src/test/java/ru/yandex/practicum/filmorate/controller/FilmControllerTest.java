@@ -3,9 +3,17 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 
 import java.time.LocalDate;
@@ -13,9 +21,21 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class FilmControllerTest {
     private Film film;
+    //@Mock
+    //private FilmService filmService;
+
+    @Mock
+    private FilmStorage filmStorage;
+    @Mock
+    private UserService userService;
+
+    @InjectMocks
+    private FilmService filmService;
 
     void validateInput(Film film) throws ConstraintViolationException {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -24,6 +44,11 @@ class FilmControllerTest {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+    }
+
+    private User getTestUser() {
+        return User.builder().id(1L).email("test@mail.ru").login("login")
+                .name("name").birthday(LocalDate.of(1970,1,1)).build();
     }
 
     @BeforeEach
@@ -68,16 +93,21 @@ class FilmControllerTest {
         }
     }
 
-    @Test
+    //@Test
     void shouldNotPassReleaseDateValidation() {
         /*
-        Date releaseFilm = new Date(-10_000_000_000_000L);
+        LocalDate releaseFilm = LocalDate.of(0,1,1);
         film.setId(null);
         film.setReleaseDate(releaseFilm);
+        User user = getTestUser();
+        when(filmStorage.create(film)).thenReturn(film);
+        when(userService.findUserById(1)).thenReturn(user);
 
-        UserStorage userStorage = new InMemoryUserStorage();
-        UserService userService = new UserService(userStorage);
-        FilmStorage filmStorage = new InMemoryFilmStorage();
+
+        //UserStorage userStorage = new InMemoryUserStorage();
+        //FriendStorage friendStorage = new FriendDbStorage()
+        //UserService userService = new UserService(userStorage);
+        //FilmStorage filmStorage = new InMemoryFilmStorage();
         FilmService filmService = new FilmService(filmStorage,userService);
 
         FilmController fc = new FilmController(filmService);
@@ -86,7 +116,8 @@ class FilmControllerTest {
         } catch (ValidationException ex) {
             assertEquals(ex.getMessage(),"Дата релиза — не раньше 28 декабря 1895 года.");
         }
-        */
+
+         */
     }
 
     @Test
@@ -99,7 +130,7 @@ class FilmControllerTest {
         }
     }
 
-    @Test
+    //@Test
     void findAll() {
         /*
         UserStorage userStorage = new InMemoryUserStorage();
@@ -115,9 +146,10 @@ class FilmControllerTest {
         assertEquals(1,fc.findAll().size());
         assertEquals(1,fc.findAll().stream().toList().get(0).getId());
         */
+
     }
 
-    @Test
+    //@Test
     void createFilm() {
         /*
         UserStorage userStorage = new InMemoryUserStorage();
@@ -136,7 +168,7 @@ class FilmControllerTest {
         */
     }
 
-    @Test
+    //@Test
     void updateFilm() {
         /*
         UserStorage userStorage = new InMemoryUserStorage();
