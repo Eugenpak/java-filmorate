@@ -23,6 +23,8 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
             " WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM users WHERE id = ?";
 
+    private static final String DELETE_ALL_QUERY = "DELETE FROM users";
+
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper, User.class);
     }
@@ -71,6 +73,13 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
     public boolean delUserById(long id) {
         log.debug("UserDbStorage delUserById(id:{}).", id);
         return delete(DELETE_QUERY, id);
+    }
+
+    @Override
+    public boolean delAllUsers() {
+        log.debug("UserDbStorage delAllUsers().");
+        int rowsDeleted = jdbc.update(DELETE_ALL_QUERY);
+        return rowsDeleted > 0;
     }
 
     @Override

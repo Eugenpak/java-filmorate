@@ -94,4 +94,9 @@ public class InMemoryUserStorage implements UserStorage {
     public boolean delUserById(long id) {
         return false;
     }
+
+    @Override
+    public boolean delAllUsers() {
+        return false;
+    }
 }
