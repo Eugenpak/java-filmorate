@@ -32,6 +32,7 @@ class FriendDbStorageTest {
                 .name("name-4").birthday(LocalDate.of(2000,4,3)).build();
         return List.of(one,two,upd,del);
     }
+
     @Test
     void getFriendsAll() {
         friendDbStorage.delAllFriends();
