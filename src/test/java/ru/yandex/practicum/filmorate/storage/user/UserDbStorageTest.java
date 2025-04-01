@@ -56,6 +56,7 @@ class UserDbStorageTest {
                 );
         assertEquals(sizeBeforeCreate + 1, sizeAfterCreate);
     }
+
     @Test
     void update() {
         User expectedUser = userStorage.create(getTestUser().get(2));
@@ -66,6 +67,7 @@ class UserDbStorageTest {
         assertEquals("After NAME update in UserDbStorage",actualUser.getName());
         assertEquals(expectedId, actualUser.getId());
     }
+
     @Test
     void delUserById() {
         if (userStorage.findAll().size() >= 1) {
