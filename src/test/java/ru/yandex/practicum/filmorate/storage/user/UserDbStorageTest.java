@@ -38,11 +38,11 @@ class UserDbStorageTest {
         User expectedUser = getTestUser().get(0);
         User actualUser = userStorage.create(expectedUser);
         int sizeAfter = userStorage.findAll().size();
-        assertEquals(sizeBefore+1, sizeAfter);
+        assertEquals(sizeBefore + 1, sizeAfter);
     }
 
     @Test
-    void  create() {
+    void create() {
         User expectedUser = getTestUser().get(1);
         int sizeBeforeCreate = userStorage.findAll().size();
         User actualUser = userStorage.create(expectedUser);
@@ -54,18 +54,20 @@ class UserDbStorageTest {
                 .hasValueSatisfying(user ->
                         assertThat(user).hasFieldOrPropertyWithValue("id", id)
                 );
-        assertEquals(sizeBeforeCreate+1, sizeAfterCreate);
+        assertEquals(sizeBeforeCreate + 1, sizeAfterCreate);
     }
-    @Test void  update() {
+    @Test
+    void update() {
         User expectedUser = userStorage.create(getTestUser().get(2));
         String expectedName = expectedUser.getName();
         long expectedId = expectedUser.getId();
         expectedUser.setName("After NAME update in UserDbStorage");
         User actualUser = userStorage.update(expectedUser);
-        assertEquals( "After NAME update in UserDbStorage",actualUser.getName());
+        assertEquals("After NAME update in UserDbStorage",actualUser.getName());
         assertEquals(expectedId, actualUser.getId());
     }
-    @Test void  delUserById() {
+    @Test
+    void delUserById() {
         if (userStorage.findAll().size() >= 1) {
             userStorage.delAllUsers();
         }
