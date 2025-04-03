@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,7 +33,12 @@ public class MpaService {
         if (findMpa.isEmpty()) {
             throw new NotFoundException("Рейтинг с id = " + id + " не найден");
         }
-        log.info("Получен Mpa findMpaById({})",id);
+        log.info("Получен M-S findMpaById({})",id);
         return findMpa.get();
+    }
+
+    public Map<Long,Mpa> getMpaById(List<Long> mpaId) {
+        log.info("Start M-S getMpaById(): {}",mpaId);
+        return mpaStorage.getMpaById(mpaId);
     }
 }

@@ -7,8 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,6 +32,16 @@ public class GenreService {
         }
         log.info("Получен Genre findGenreById({})",id);
         return findGenre.get();
+    }
+
+    public Map<Long,Genre> getGenreById(List<Long> genreId) {
+        return genreStorage.getGenreById(genreId);
+    }
+
+    public void findNotValid(Set<Genre> genres) {
+        log.info("Start G-S findNotValid(genres: {})",genres);
+        genreStorage.findNotValid(genres);
+        log.info("Start G-S findNotValid(). Проверено genres!");
     }
 
 }
