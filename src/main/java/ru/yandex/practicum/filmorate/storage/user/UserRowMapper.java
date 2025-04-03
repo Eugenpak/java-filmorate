@@ -18,7 +18,7 @@ public class UserRowMapper implements RowMapper<User> {
                 .name(rs.getString("name"))
                 .birthday(rs.getDate("birthday").toLocalDate())
                 .build();
-        System.out.println(rowNum + " fromMapRow:" + fromMapRow);
+
         return fromMapRow;
     }
 }

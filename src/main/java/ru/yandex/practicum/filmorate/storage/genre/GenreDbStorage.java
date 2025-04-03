@@ -1,16 +1,18 @@
 package ru.yandex.practicum.filmorate.storage.genre;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -44,6 +46,19 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
                 throw new NotFoundException("Жанр genres: {id:" + el.getId() + "} не найден");
             }
         }
+    }
 
+    @Override
+    public Map<Long,Genre> getGenreById(List<Long> genreId) {
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+        String sql = "SELECT * FROM GENRES WHERE ID IN (:genreId)";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("genreId", genreId);
+        List<Genre> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(Genre.class));
+        log.info("GenreDbStorage >------> {})",result);
+        Map<Long,Genre> genreMap = new HashMap<>();
+        result.forEach(g -> genreMap.put(g.getId(),g));
+        return genreMap;
+        //--------------------- awa ----------------- awa -------------------------------
     }
 }

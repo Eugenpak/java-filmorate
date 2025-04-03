@@ -2,10 +2,15 @@ package ru.yandex.practicum.filmorate.storage.filmmpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
+import ru.yandex.practicum.filmorate.model.FilmMpa;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
@@ -38,6 +43,18 @@ public class FilmMpaDaoImpl implements FilmMpaDao {
         log.debug("FilmMpaDaoImpl add({}, {}).", filmId, mpaId);
         int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, mpaId);
         log.trace("Фильму ID_{} добавлен рейтинг ID_{}.", filmId, mpaId);
+    }
+
+    @Override
+    public List<FilmMpa> getFilmMpaByFilmId(List<Long> values) {
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        String sql = "SELECT * FROM FILM_MPAS WHERE FILM_ID IN (:values)";
+        //List<Long> values = filmIdList;
+        MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
+        List<FilmMpa> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmMpa.class));
+        log.info("FilmGenreDaoImpl >------> {})",result);
+        return result;
+        //--------------------- awa ----------------- awa -------------------------------
     }
 
     @Override

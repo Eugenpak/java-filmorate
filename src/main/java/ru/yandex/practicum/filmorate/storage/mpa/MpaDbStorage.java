@@ -2,14 +2,16 @@ package ru.yandex.practicum.filmorate.storage.mpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -31,6 +33,20 @@ public class MpaDbStorage extends BaseDbStorage<Mpa> implements MpaStorage {
     public Collection<Mpa> findAll() {
         log.debug("MpaDbStorage findAll().");
         return findMany(FIND_ALL_QUERY);
+    }
+
+    @Override
+    public Map<Long,Mpa> getMpaById(List<Long> mpaId) {
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+        String sql = "SELECT * FROM MPAS WHERE ID IN (:mpaId)";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("mpaId", mpaId);
+        List<Mpa> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(Mpa.class));
+        log.info("GenreDbStorage >------> {})",result);
+        Map<Long,Mpa> mpaMap = new HashMap<>();
+        result.forEach(g -> mpaMap.put(g.getId(),g));
+        return mpaMap;
+        //--------------------- awa ----------------- awa -------------------------------
     }
 }
 
