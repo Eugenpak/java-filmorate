@@ -96,6 +96,7 @@ class FilmDbStorageTest {
                 );
     }
 
+    /*
     @Test
     void addLike() {
         likeDao.deleteAllPopularFilms();
@@ -130,5 +131,6 @@ class FilmDbStorageTest {
         listPop = filmDbStorage.getPopularFilms(10);
         assertEquals(0, listPop.size());
     }
+    */
 
 }

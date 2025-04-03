@@ -26,8 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class FilmControllerTest {
     private Film film;
-    //@Mock
-    //private FilmService filmService;
 
     @Mock
     private FilmStorage filmStorage;
