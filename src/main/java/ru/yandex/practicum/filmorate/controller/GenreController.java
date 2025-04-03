@@ -32,7 +32,7 @@ public class GenreController {
     public Genre findGenreById(@NotNull @PathVariable long id) {
         log.info("GC Genre findGenreById(id=" + id + ")");
         Genre findGenre = genreService.findGenreById(id);
-        //System.out.println("GC findGenreById= " + findGenre);
+
         log.info("GC findGenreById(id=" + id + "):" + findGenre);
         return findGenre;
     }

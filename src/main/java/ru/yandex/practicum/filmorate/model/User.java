@@ -24,7 +24,6 @@ public class User {
     private String name; //— имя для отображения — name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday; //— дата рождения — birthday.
-    //private final Set<Long> friends  = new HashSet<>();
 }
 
 

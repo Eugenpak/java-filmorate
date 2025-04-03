@@ -82,31 +82,4 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
         return rowsDeleted > 0;
     }
 
-    @Override
-    public void addFriend(long userId, long friendId) {
-        log.debug("UserDbStorage addFriend(userId:{}, friendId:{}).", userId, friendId);
-        // Смотри friendStorage.addFriend(userId,friendId);
-        log.trace("У пользователя ID_{} добавлен друг с ID_{}.", userId, friendId);
-    }
-
-    @Override
-    public void removeFromFriends(long userId, long friendId) {
-        log.debug("UserDbStorage removeFromFriends(userId:{}, friendId:{}).", userId, friendId);
-        // Смотри friendStorage.removeFromFriends(userId,friendId);
-        log.trace("У пользователя ID_{} удалён друг с ID_{}.", userId, friendId);
-    }
-
-    @Override
-    public Collection<User> getAllFriends(long userId) {
-        log.debug("UserDbStorage getAllFriends(userId:{}).", userId);
-        // Смотри friendStorage.getFriendsAll(userId);
-        return null;
-    }
-
-    @Override
-    public Collection<User> getCommonFriends(long userId,long otherId) {
-        log.debug("UserDbStorage getCommonFriends(userId:{}, otherId:{}).", userId, otherId);
-        // Смотри friendStorage.getFriendsCommon(userId,otherId);
-        return null;
-    }
 }

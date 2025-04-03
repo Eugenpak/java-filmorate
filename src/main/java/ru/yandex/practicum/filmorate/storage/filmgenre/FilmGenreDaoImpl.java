@@ -52,8 +52,6 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         //>-----------awa -----
-        //awa(List.of(1L));
-        //<-----------awa -----
         final List<FilmGenre> filmGengeList = new ArrayList<>();
         for (Genre el: genres) {
             filmGengeList.add(new FilmGenre(filmId,el.getId()));
@@ -81,7 +79,7 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
     public List<FilmGenre> getFilmGenreByFilmId(List<Long> values) {
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
         String sql = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (:values)";
-        //List<Long> values = filmIdList;
+
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
         List<FilmGenre> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmGenre.class));
         log.info("FilmGenreDaoImpl >------> {})",result);

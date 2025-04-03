@@ -27,12 +27,6 @@ public class FilmController {
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Start Film findAll()");
-        //return filmService.findAll();
-        /*Collection<Film> filmList = filmService.findAll();
-        for(Film el : filmList) {
-            //System.out.println("id=" + el.getId() + " realesDate=" + el.getReleaseDate());
-            System.out.println("FC-findAll " + el);
-        } */
         return filmService.findAll();
     }
 

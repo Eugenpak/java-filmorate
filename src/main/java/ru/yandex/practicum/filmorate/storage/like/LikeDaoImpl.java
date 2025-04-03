@@ -33,7 +33,7 @@ public class LikeDaoImpl implements LikeDao {
     public void add(long filmId, long userId) {
         log.debug("LikeDaoImpl add({}, {}).", filmId, userId);
         int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, userId);
-        //System.out.println("LikeDaoImpl - rowsAdd = " + rowsAdd);
+
         log.trace("Фильму ID_{} добавлен лайк от пользователя ID_{}.", filmId, userId);
     }
 

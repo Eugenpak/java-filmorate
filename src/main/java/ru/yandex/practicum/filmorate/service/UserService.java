@@ -16,7 +16,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class UserService {
-
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
 
@@ -32,7 +31,6 @@ public class UserService {
     }
 
     public User create(User user) {
-        //log.info("Start User create()");
         log.info("US->Service User = " + user);
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             String str = "Имейл должен быть указан, содержать символ '@'";

@@ -48,7 +48,7 @@ public class FilmMpaDaoImpl implements FilmMpaDao {
     public List<FilmMpa> getFilmMpaByFilmId(List<Long> values) {
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
         String sql = "SELECT * FROM FILM_MPAS WHERE FILM_ID IN (:values)";
-        //List<Long> values = filmIdList;
+
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
         List<FilmMpa> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmMpa.class));
         log.info("FilmGenreDaoImpl >------> {})",result);

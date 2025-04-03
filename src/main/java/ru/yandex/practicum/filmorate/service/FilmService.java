@@ -49,7 +49,6 @@ public class FilmService {
 
     public Collection<Film> findAll() {
         log.info("Start Film findAll()");
-        //return filmStorage.findAll();
         Collection<Film> listFilm = filmStorage.findAll();
         //----------------------------
         List<Long> filmIdList = listFilm.stream().map(Film::getId).toList();
@@ -164,9 +163,6 @@ public class FilmService {
             throw new NotFoundException("Фильм с id = " + id + " не найден");
         }
         //---------------------------------------------
-        //if (filmOpt.isEmpty()) {
-        //    return Optional.empty();
-        //}
         Film findFilm = findFilmOpt.get();
         Optional<Mpa> mpaId = filmMpaDao.get(findFilm.getId());
         Set<Genre> genres = filmGenreDao.findGenresById(findFilm.getId());
@@ -187,7 +183,7 @@ public class FilmService {
         findFilmById(filmId);
         userService.findUserById(userId);
         try {
-            //likeDao.addLike(filmId, userId);
+
             likeDao.add(filmId,userId);
         } catch (Exception ex) {
             String msg = "Пользователь с userId=" + userId +
@@ -201,7 +197,7 @@ public class FilmService {
         log.info("Start FS deleteLike(filmId={}, userId={})",filmId,userId);
         findFilmById(filmId);
         userService.findUserById(userId);
-        //likeDao.deleteLike(filmId,userId);
+
         likeDao.delete(filmId,userId);
         log.info("Пользователь с userId=" + userId +
                 " удалил лайк к фильму с filmId=" + filmId);
@@ -209,7 +205,7 @@ public class FilmService {
 
     public List<Film> getPopularFilms(int count) {
         log.info("Start FS getPopularFilms()");
-        //return likeDao.getPopularFilms(count); findPopularFilmsId
+
         return likeDao.findPopularFilmsId(count).stream()
                 .map(p -> filmStorage.findFilmById(p.getFilmId()).get())
                 .collect(Collectors.toList());
