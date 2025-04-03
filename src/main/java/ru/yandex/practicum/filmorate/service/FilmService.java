@@ -50,35 +50,36 @@ public class FilmService {
     public Collection<Film> findAll() {
         log.info("Start Film findAll()");
         Collection<Film> listFilm = filmStorage.findAll();
-        //----------------------------
+        return getFieldsFilm(listFilm);
+    }
+
+    private Collection<Film> getFieldsFilm(Collection<Film> listFilm) {
+        log.info("F-S getFieldsFilm: begin");
         List<Long> filmIdList = listFilm.stream().map(Film::getId).toList();
+        Map<Long,Set<Genre>> dtoGegres = getManyGenreForFilm(filmIdList);
+        Map<Long,Mpa> dtoMpa = getManyMpaForFilm(filmIdList);
+        Collection<Film> temp =joinFilmGenre(listFilm,dtoGegres);
+        log.info("F-S getFieldsFilm: end");
+        return joinFilmMpa(temp,dtoMpa);
+    }
 
-        List<FilmGenre> filmGenreList = filmGenreDao.getFilmGenreByFilmId(filmIdList);
-        List<FilmMpa> filmMpaList = filmMpaDao.getFilmMpaByFilmId(filmIdList);
-
-        List<Long> mIdL = filmMpaList.stream().map(FilmMpa::getMpaId).distinct().toList();
-        List<Long> gIdL = filmGenreList.stream().map(FilmGenre::getGenreId).distinct().toList();
-
-        Map<Long, Genre> gl = genreService.getGenreById(gIdL);
-        Map<Long,Set<Genre>> mapFilmGenre = new HashMap<>();
-        filmGenreList.forEach(fg -> {
-            mapFilmGenre.putIfAbsent(fg.getFilmId(), new HashSet<>());
-            mapFilmGenre.get(fg.getFilmId()).add(gl.get(fg.getGenreId()));
-        });
-        log.info("F-S mapFilmGenre: {}",mapFilmGenre);
-
-        Map<Long, Mpa> mpaM = mpaService.getMpaById(mIdL);
-        Map<Long,Mpa> mapFilmMpa = new HashMap<>();
-        filmMpaList.forEach(fm -> {
-            mapFilmMpa.put(fm.getFilmId(), mpaM.get(fm.getMpaId()));
-        });
-        log.info("F-S mapFilmMpa: {}",mapFilmMpa);
-
+    private Collection<Film> joinFilmGenre(Collection<Film> listFilm,Map<Long,Set<Genre>> dtoGegres) {
+        log.info("F-S joinFilmMpa: {}",dtoGegres);
         Collection<Film> fc = listFilm.stream()
                 .peek(f -> {
-                    Optional<Set<Genre>> genreOpt = Optional.ofNullable(mapFilmGenre.get(f.getId()));
+                    Optional<Set<Genre>> genreOpt = Optional.ofNullable(dtoGegres.get(f.getId()));
                     genreOpt.ifPresent(f::setGenres);
-                    Optional<Mpa> mpaOpt = Optional.ofNullable(mapFilmMpa.get(f.getId()));
+                })
+                .collect(Collectors.toList());
+        log.info("F-S joinFilmGenre: |-> {}",fc);
+        return fc;
+    }
+
+    private Collection<Film> joinFilmMpa(Collection<Film> listFilm,Map<Long,Mpa> dtoMpa) {
+        log.info("F-S joinFilmMpa: {}",dtoMpa);
+        Collection<Film> fc = listFilm.stream()
+                .peek(f -> {
+                    Optional<Mpa> mpaOpt = Optional.ofNullable(dtoMpa.get(f.getId()));
                     if (mpaOpt.isPresent()) {
                         f.setMpa(mpaOpt.get());
                     } else {
@@ -86,10 +87,37 @@ public class FilmService {
                     }
                 })
                 .collect(Collectors.toList());
-        log.info("F-S addGenres: {}",fc);
-        //----------------------------
+        log.info("F-S joinFilmMpa: |-> {}",fc);
         return fc;
     }
+
+    private Map<Long,Set<Genre>> getManyGenreForFilm(List<Long> filmIdList) {
+        log.info("F-S getManyGenreForFilm: {}",filmIdList);
+        List<FilmGenre> filmGenreList = filmGenreDao.getFilmGenreByFilmId(filmIdList);
+        List<Long> gIdL = filmGenreList.stream().map(FilmGenre::getGenreId).distinct().toList();
+
+        Map<Long, Genre> gl = genreService.getGenreById(gIdL);//-GM
+        Map<Long,Set<Genre>> mapFilmGenre = new HashMap<>();//-GM
+        filmGenreList.forEach(fg -> { //-GM
+            mapFilmGenre.putIfAbsent(fg.getFilmId(), new HashSet<>()); //-GM
+            mapFilmGenre.get(fg.getFilmId()).add(gl.get(fg.getGenreId())); //-GM
+        });  //-GM
+        return mapFilmGenre;
+    }
+
+    private Map<Long,Mpa> getManyMpaForFilm(List<Long> filmIdList) {
+        log.info("F-S getManyMpaForFilm: {}",filmIdList);
+        List<FilmMpa> filmMpaList = filmMpaDao.getFilmMpaByFilmId(filmIdList); //-MM
+        List<Long> mIdL = filmMpaList.stream().map(FilmMpa::getMpaId).distinct().toList(); //-MM
+
+        Map<Long, Mpa> mpaM = mpaService.getMpaById(mIdL); //-MM
+        Map<Long,Mpa> mapFilmMpa = new HashMap<>(); //-MM
+        filmMpaList.forEach(fm -> {  //-MM
+            mapFilmMpa.put(fm.getFilmId(), mpaM.get(fm.getMpaId()));  //-MM
+        });  //-MM
+        return mapFilmMpa;
+    }
+
 
     public Film create(Film film) {
         // проверяем выполнение необходимых условий
@@ -203,11 +231,12 @@ public class FilmService {
                 " удалил лайк к фильму с filmId=" + filmId);
     }
 
-    public List<Film> getPopularFilms(int count) {
+    public Collection<Film> getPopularFilms(int count) {
         log.info("Start FS getPopularFilms()");
-
-        return likeDao.findPopularFilmsId(count).stream()
+        Collection<Film> popFilm = likeDao.findPopularFilmsId(count).stream()
                 .map(p -> filmStorage.findFilmById(p.getFilmId()).get())
                 .collect(Collectors.toList());
+        return getFieldsFilm(popFilm);
+
     }
 }
