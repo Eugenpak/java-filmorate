@@ -58,7 +58,7 @@ public class FilmService {
         List<Long> filmIdList = listFilm.stream().map(Film::getId).toList();
         Map<Long,Set<Genre>> dtoGegres = getManyGenreForFilm(filmIdList);
         Map<Long,Mpa> dtoMpa = getManyMpaForFilm(filmIdList);
-        Collection<Film> temp =joinFilmGenre(listFilm,dtoGegres);
+        Collection<Film> temp = joinFilmGenre(listFilm,dtoGegres);
         log.info("F-S getFieldsFilm: end");
         return joinFilmMpa(temp,dtoMpa);
     }
