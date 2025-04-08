@@ -39,6 +39,7 @@ public class FilmController {
         // сохраняем новую публикацию в памяти приложения
         final Film createdFilm = filmService.create(film);
         log.info("Новый фильм сохранен (id=" + createdFilm.getId() + ", name='" + createdFilm.getName() + "')");
+        System.out.println("FC-create " + createdFilm);
         return createdFilm;
     }
 

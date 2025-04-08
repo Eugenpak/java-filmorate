@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
-
 import java.util.Collection;
+import java.util.Optional;
 
 public interface FilmStorage {
     Collection<Film> findAll();
@@ -11,9 +11,9 @@ public interface FilmStorage {
 
     Film update(Film film);
 
-    public Film findFilmById(long id);
+    Optional<Film> findFilmById(long id);
 
-    public void addLike(long filmId, long userId);
+    boolean deleteAll();
 
-    public void deleteLike(long filmId, long userId);
+    boolean delByFilmId(long id);
 }

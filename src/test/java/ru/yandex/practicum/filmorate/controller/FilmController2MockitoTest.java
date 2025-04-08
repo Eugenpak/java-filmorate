@@ -8,7 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.sql.Date;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ public class FilmController2MockitoTest {
 
     private Film getTestFilm() {
         return Film.builder().id(1L).name("name фильма").description("описание фильма")
-                .releaseDate(new Date(0L)).duration(100).build();
+                .releaseDate(LocalDate.of(1970,1,1)).duration(100).build();
     }
 
     @Test

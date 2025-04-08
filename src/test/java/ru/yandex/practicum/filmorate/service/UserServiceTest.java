@@ -6,11 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import java.time.LocalDate;
 
-import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,17 +22,20 @@ class UserServiceTest {
     @Mock
     private UserStorage userStorage;
 
+    @Mock
+    private FriendStorage friendStorage;
+
     @InjectMocks
     private UserService userService;
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(new Date(0)).build();
+                .name("name").birthday(LocalDate.of(1970,1,1)).build();
     }
 
     private User getTestOtherUser() {
         return User.builder().id(2L).email("other@mail.ru").login("login-2")
-                .name("name-2").birthday(new Date(0)).build();
+                .name("name-2").birthday(LocalDate.of(1970,1,1)).build();
     }
 
     @Test
@@ -58,7 +63,7 @@ class UserServiceTest {
     @Test void update() {
         User expectedUser = getTestUser();
         when(userStorage.update(expectedUser)).thenReturn(expectedUser);
-        when(userStorage.findUserById(1)).thenReturn(expectedUser);
+        when(userStorage.findUserById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
 
         User actualUser = userService.update(expectedUser);
 
@@ -72,35 +77,35 @@ class UserServiceTest {
     @Test void addFriend() {
         User expectedUser = getTestUser();
         User otherUser = getTestOtherUser();
-        when(userStorage.findUserById(expectedUser.getId())).thenReturn(expectedUser);
-        when(userStorage.findUserById(otherUser.getId())).thenReturn(otherUser);
+        when(userStorage.findUserById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
+        when(userStorage.findUserById(otherUser.getId())).thenReturn(Optional.of(otherUser));
 
         userService.addFriend(1,2);
-        verify(userStorage, times(1)).addFriend(1,2);
-        verify(userStorage, times(1)).findUserById(1);
-        verify(userStorage, times(1)).findUserById(2);
+        verify(friendStorage, times(1)).addFriend(1,2);
+        verify(userStorage, times(1)).findUserById(expectedUser.getId());
+        verify(userStorage, times(1)).findUserById(otherUser.getId());
     }
 
     @Test void removeFromFriends() {
         User expectedUser = getTestUser();
         User otherUser = getTestOtherUser();
-        when(userStorage.findUserById(expectedUser.getId())).thenReturn(expectedUser);
-        when(userStorage.findUserById(otherUser.getId())).thenReturn(otherUser);
+        when(userStorage.findUserById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
+        when(userStorage.findUserById(otherUser.getId())).thenReturn(Optional.of(otherUser));
 
         userService.removeFromFriends(1,2);
-        verify(userStorage, times(1)).removeFromFriends(1,2);
+        verify(friendStorage, times(1)).removeFromFriends(1,2);
         verify(userStorage, times(1)).findUserById(1);
         verify(userStorage, times(1)).findUserById(2);
     }
 
     @Test void getAllFriends() {
         Collection<User> expectedFriends = List.of(getTestUser());
-        when(userStorage.getAllFriends(2)).thenReturn(expectedFriends);
-        when(userStorage.findUserById(2)).thenReturn(getTestUser());
+        when(friendStorage.getFriendsAll(2)).thenReturn(expectedFriends);
+        when(userStorage.findUserById(2)).thenReturn(Optional.of(getTestUser()));
 
         Collection<User> actualUser = userService.getAllFriends(2);
 
-        verify(userStorage, times(1)).getAllFriends(2);
+        verify(friendStorage, times(1)).getFriendsAll(2);
         verify(userStorage, times(1)).findUserById(2);
         assertEquals(expectedFriends.size(), actualUser.size());
         assertSame(expectedFriends.stream().toList().get(0), actualUser.stream().toList().get(0));
@@ -110,13 +115,13 @@ class UserServiceTest {
 
     @Test void getCommonFriends() {
         Collection<User> expectedFriends = List.of(getTestUser());
-        when(userStorage.getCommonFriends(2,3)).thenReturn(expectedFriends);
-        when(userStorage.findUserById(2)).thenReturn(getTestUser());
-        when(userStorage.findUserById(3)).thenReturn(getTestOtherUser());
+        when(friendStorage.getFriendsCommon(2,3)).thenReturn(expectedFriends);
+        when(userStorage.findUserById(2)).thenReturn(Optional.of(getTestUser()));
+        when(userStorage.findUserById(3)).thenReturn(Optional.of(getTestOtherUser()));
 
         Collection<User> actualUser = userService.getCommonFriends(2,3);
 
-        verify(userStorage, times(1)).getCommonFriends(2,3);
+        verify(friendStorage, times(1)).getFriendsCommon(2,3);
         verify(userStorage, times(1)).findUserById(2);
         verify(userStorage, times(1)).findUserById(3);
         assertEquals(expectedFriends.size(), actualUser.size());
@@ -127,7 +132,7 @@ class UserServiceTest {
 
     @Test void findFilmById() {
         User expectedUsers = getTestUser();
-        when(userStorage.findUserById(1)).thenReturn(expectedUsers);
+        when(userStorage.findUserById(1)).thenReturn(Optional.of(expectedUsers));
 
         User actualUser = userService.findUserById(1);
 

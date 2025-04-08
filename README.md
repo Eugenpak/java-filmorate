@@ -154,8 +154,7 @@ WHERE u.id in (SELECT f.friend_id FROM friends as f WHERE f.user_id =2)
 * `Добавить друга` у пользователя:
 
 ```SQL
-INSERT INTO friends (user_id,
-                     friend_id)
+INSERT INTO friends (user_id,friend_id)
 VALUES (?, ?)
 ```
 
