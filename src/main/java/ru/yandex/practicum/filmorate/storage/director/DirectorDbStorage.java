@@ -87,7 +87,7 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
         return findNotValidLong(values,findDirectors);
     }
 
-    private List<Long> findNotValidLong (List<Long> listValue,List<Long> findValue) {
+    private List<Long> findNotValidLong(List<Long> listValue,List<Long> findValue) {
         List<Long> result = new ArrayList<>();
         for (Long el:listValue) {
             boolean flag = findValue.contains(el);
