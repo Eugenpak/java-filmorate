@@ -14,11 +14,8 @@ import ru.yandex.practicum.filmorate.storage.filmmpa.FilmMpaDao;
 import ru.yandex.practicum.filmorate.storage.like.LikeDao;
 
 import java.time.LocalDate;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+//import static org.junit.jupiter.api.Assertions.*;
+//import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FilmServiceTest {
