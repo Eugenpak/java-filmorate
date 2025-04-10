@@ -265,7 +265,7 @@ public class FilmService {
 
     public Collection<Director> updateFilmDirectors(long filmId, Collection<Director> directors) {
         log.debug("FilmService updateFilmDirectors({}, {}).", filmId, directors);
-        Collection<Long> directorId = directors.stream().map(Director::getId).toList() ;
+        Collection<Long> directorId = directors.stream().map(Director::getId).toList();
         directorService.findNotValid(directorId);
         filmDirectorDao.deleteDirectorByFilm(filmId);
         filmDirectorDao.addSet(filmId,directors);
