@@ -26,10 +26,10 @@ public class RecommendationService {
 
         // находим список фильмов, которые лайкнул пользователь
         Set<Long> likedFilms = likeDao.getLikedFilmsIdsByUser(userId);
-        log.info("Пользователь {} поставил лайки следующим фильмам: {}", userId, likedFilms);
+        log.debug("Пользователь {} поставил лайки следующим фильмам: {}", userId, likedFilms);
 
         if (likedFilms.isEmpty()) {
-            log.info("Пользователь {} не поставил ни одного лайка, рекомендации нет", userId);
+            log.debug("Пользователь {} не поставил ни одного лайка, рекомендации нет", userId);
             return Collections.emptyList();
         }
 
@@ -37,7 +37,7 @@ public class RecommendationService {
         Map<Long, Integer> commonLikesCount = new HashMap<>();
         for (Long filmId : likedFilms) {
             Set<Long> usersWhoLikedFilm = likeDao.getUserIdsByLikedFilm(filmId);
-            log.info("Фильм {} лайкнули пользователи: {}", filmId, usersWhoLikedFilm);
+            log.debug("Фильм {} лайкнули пользователи: {}", filmId, usersWhoLikedFilm);
 
             for (Long otherUser : usersWhoLikedFilm) {
                 if (!otherUser.equals(userId)) {
@@ -47,10 +47,10 @@ public class RecommendationService {
         }
 
         if (commonLikesCount.isEmpty()) {
-            log.info("Не найдено похожих пользователей {}", userId);
+            log.debug("Не найдено похожих пользователей {}", userId);
             return Collections.emptyList();
         }
-        log.info("Количество общих лайков с другими пользователями: {}", commonLikesCount);
+        log.debug("Количество общих лайков с другими пользователями: {}", commonLikesCount);
 
         // находим максимальное пересечение лайков
         int maxCommonLikes = Collections.max(commonLikesCount.values());
@@ -60,7 +60,7 @@ public class RecommendationService {
                 similarUsers.add(entry.getKey());
             }
         }
-        log.info("Пользователи с максимально общими лайками: {}", similarUsers);
+        log.debug("Пользователи с максимально общими лайками: {}", similarUsers);
 
         // находим фильмы, которые оценили похожие пользователи, но не оценил сам пользователь
         Set<Long> recommendedFilmIds = new HashSet<>();
@@ -70,12 +70,12 @@ public class RecommendationService {
             similarUserLikes.removeAll(likedFilms);
             recommendedFilmIds.addAll(similarUserLikes);
         }
-        log.info("Рекомендуемые ID фильмов для пользователя {}: {}", userId, recommendedFilmIds);
+        log.debug("Рекомендуемые ID фильмов для пользователя {}: {}", userId, recommendedFilmIds);
 
         List<Film> recommendedFilms = new ArrayList<>();
         for (Long filmId : recommendedFilmIds) {
             filmStorage.findFilmById(filmId).ifPresent(film -> {
-                log.info("Добавлен фильм в рекомендации: {}", film);
+                log.debug("Добавлен фильм в рекомендации: {}", film);
                 recommendedFilms.add(film);
             });
         }
