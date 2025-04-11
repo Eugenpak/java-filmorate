@@ -24,7 +24,7 @@ public class LikeDaoImpl implements LikeDao {
             "COUNT(user_id) AS like_count FROM likes GROUP BY film_id " +
             "ORDER BY like_count DESC LIMIT ?";
 
-    public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
+    public LikeDaoImpl(JdbcTemplate jdbcTemplate, RowMapper<PopularFilm> mapperPop) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapperPop = mapperPop;
     }
@@ -47,7 +47,7 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public Collection<PopularFilm> findPopularFilmsId(int count) {
         log.debug("LikeDaoImpl findPopularFilmsId().");
-        return jdbcTemplate.query(FIND_POPULAR_FILM_QUERY, mapperPop,count);
+        return jdbcTemplate.query(FIND_POPULAR_FILM_QUERY, mapperPop, count);
     }
 
     @Override
