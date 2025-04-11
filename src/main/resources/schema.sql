@@ -65,3 +65,16 @@ create table if not exists film_mpas
     foreign key (mpa_id) references mpas (id) on delete cascade,    
     primary key (film_id, mpa_id)
 );
+-- Таблица активности пользователя
+CREATE TABLE IF NOT EXISTS user_activity (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    userId BIGINT,
+    eventType VARCHAR(100) NOT NULL,
+    operation VARCHAR(50) NOT NULL,
+    event_id BIGINT,
+    timestamp BIGINT,
+    FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
+);
+    --Таблица user_activity связана с таблицей users через внешний ключ user_id. Также данные в поле related_id могут
+    --быть связаны с таблицами friends и likes, в зависимости от типа события, указанного в поле event_type.
+);
