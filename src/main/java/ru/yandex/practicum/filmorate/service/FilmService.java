@@ -166,6 +166,7 @@ public class FilmService {
         }
         // сохраняем новую публикацию в памяти приложения
         film = filmStorage.create(film);
+        Set<Genre> sg = film.getGenres();
         //---------------------------------------------------------------
         if (film.getMpa() != null) {
             Long mpaId = mpaService.findMpaById(film.getMpa().getId()).getId();
@@ -188,6 +189,14 @@ public class FilmService {
         }
         //---------------------------------------------------------------
         film = getFieldsFilm(List.of(film)).stream().toList().get(0);
+        Set<Genre> temp = film.getGenres();
+        for (Genre el : sg) {
+            Optional<Genre> ft = temp.stream().filter(t -> t.getId().equals(el.getId())).findFirst();
+            if (ft.isPresent()) {
+                el.setName(ft.get().getName());
+            }
+        }
+        film.setGenres(sg);
         log.info("Новый фильм сохраняется (id=" + film.getId() + ", name='" + film.getName() + "')");
         return film;
     }
