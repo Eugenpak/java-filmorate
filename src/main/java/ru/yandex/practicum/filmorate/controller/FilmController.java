@@ -74,4 +74,10 @@ public class FilmController {
         log.info("UC Film findFilmById(id=" + id + ")");
         return filmService.findFilmById(id);
     }
+
+    @DeleteMapping(value = "/{filmId}")
+    public void deleteFilm(@PathVariable Long filmId) {
+        log.info("Delete film with ID = {}", filmId);
+        filmService.deleteFilm(filmId);
+    }
 }
