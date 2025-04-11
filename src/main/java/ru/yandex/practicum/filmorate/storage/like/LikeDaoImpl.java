@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.PopularFilm;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository
 @Slf4j
@@ -23,6 +25,10 @@ public class LikeDaoImpl implements LikeDao {
     private static final String FIND_POPULAR_FILM_QUERY = "SELECT film_id, " +
             "COUNT(user_id) AS like_count FROM likes GROUP BY film_id " +
             "ORDER BY like_count DESC LIMIT ?";
+
+    private static final String GET_FILMS_BY_USER_QUERY = "SELECT film_id FROM likes WHERE user_id = ?";
+
+    private static final String GET_USERS_BY_FILM_QUERY = "SELECT user_id FROM likes WHERE film_id = ?";
 
     public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
         this.jdbcTemplate = jdbcTemplate;
@@ -55,5 +61,21 @@ public class LikeDaoImpl implements LikeDao {
         log.debug("LikeDaoImpl deleteAllPopularFilms().");
         jdbcTemplate.update(DELETE_ALL_QUERY);
         log.trace("Список популярных фильмов удалён.");
+    }
+
+    @Override
+    public Set<Long> getLikedFilmsIdsByUser(long userId) {
+        log.debug("LikeDaoImpl getLikedFilmIdsByUser для пользователя с id: {}.", userId);
+        Set<Long> filmIds = new HashSet<>(jdbcTemplate.queryForList(GET_FILMS_BY_USER_QUERY, Long.class, userId));
+        log.trace("Получен список id фильмов, которые лайкнул пользователь {}: {}.", userId, filmIds);
+        return filmIds;
+    }
+
+    @Override
+    public Set<Long> getUserIdsByLikedFilm(long filmId) {
+        log.debug("LikeDaoImpl getUserIdsByLikedFilm для фильма с id: {}.", filmId);
+        Set<Long> userIds = new HashSet<>(jdbcTemplate.queryForList(GET_USERS_BY_FILM_QUERY, Long.class, filmId));
+        log.trace("Получен список id пользователей, поставивших лайк фильму {}: {}.", filmId, userIds);
+        return userIds;
     }
 }
