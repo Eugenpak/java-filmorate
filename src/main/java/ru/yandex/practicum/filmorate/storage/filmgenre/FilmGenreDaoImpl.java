@@ -9,11 +9,8 @@ import org.springframework.util.StopWatch;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
-
-
 import java.sql.*;
 import java.util.*;
-
 
 @Repository
 @Slf4j
