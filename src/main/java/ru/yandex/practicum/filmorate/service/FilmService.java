@@ -18,7 +18,7 @@ import ru.yandex.practicum.filmorate.storage.like.LikeDao;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
- 
+
 @Service
 @Slf4j
 public class FilmService {
