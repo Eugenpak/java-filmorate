@@ -68,8 +68,8 @@ create table if not exists film_mpas
 -- Таблица активности пользователя
 CREATE TABLE IF NOT EXISTS user_activity (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    userId BIGINT,
-    eventType VARCHAR(100) NOT NULL,
+    user_id BIGINT,
+    event_type VARCHAR(100) NOT NULL,
     operation VARCHAR(50) NOT NULL,
     event_id BIGINT,
     timestamp BIGINT,

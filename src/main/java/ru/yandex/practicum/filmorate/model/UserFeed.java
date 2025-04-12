@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,5 +26,5 @@ public class UserFeed {
     @NotBlank
     private Long eventId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime timeStamp;
+    private Timestamp timestamp;
 }
