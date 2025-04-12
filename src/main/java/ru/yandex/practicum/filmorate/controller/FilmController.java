@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -75,9 +74,19 @@ public class FilmController {
         return filmService.findFilmById(id);
     }
 
+
     @DeleteMapping(value = "/{filmId}")
     public void deleteFilm(@PathVariable Long filmId) {
         log.info("Delete film with ID = {}", filmId);
         filmService.deleteFilm(filmId);
+    }
+  
+    @GetMapping(value = "/director/{directorId}")
+    public List<Film> getDirectorFilms(@NotNull @PathVariable long directorId,
+                                             @RequestParam(defaultValue = "like") String sortBy) {
+
+        log.info("UC Film getDirectorFilms(directorId={}, sortBy={})",directorId,sortBy);
+        List<Film> f = filmService.getDirectorFilms(directorId,sortBy);
+        return filmService.getDirectorFilms(directorId,sortBy);
     }
 }

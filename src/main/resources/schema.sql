@@ -73,3 +73,18 @@ create table if not exists film_mpas
     foreign key (mpa_id) references mpas (id) on delete cascade,    
     primary key (film_id, mpa_id)
 );
+
+create table if not exists directors
+(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name        varchar(255) not null
+);
+
+create table if not exists film_directors
+(
+    film_id     BIGINT,
+    director_id BIGINT,
+    foreign key (film_id) references films (id) on delete cascade,
+    foreign key (director_id) references directors (id) on delete cascade,
+    primary key (film_id,director_id)
+ );
