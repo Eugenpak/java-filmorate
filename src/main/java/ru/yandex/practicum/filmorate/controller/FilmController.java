@@ -79,7 +79,7 @@ public class FilmController {
         log.info("Delete film with ID = {}", filmId);
         filmService.deleteFilm(filmId);
     }
-  
+
     @GetMapping(value = "/director/{directorId}")
     public List<Film> getDirectorFilms(@NotNull @PathVariable long directorId,
                                              @RequestParam(defaultValue = "like") String sortBy) {
