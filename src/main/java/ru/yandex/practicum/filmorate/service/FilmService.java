@@ -331,7 +331,7 @@ public class FilmService {
         findFilmById(filmId);
         filmStorage.delByFilmId(filmId);
     }
-  
+
     public List<Film> getDirectorFilms(long directorId,String sortBy) {
         SortBy sort = SortBy.from(sortBy);
         if (sort == null) {
