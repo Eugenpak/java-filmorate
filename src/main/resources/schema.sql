@@ -1,3 +1,11 @@
+--DROP TABLE mpas CASCADE;
+--DROP TABLE films CASCADE;
+--DROP TABLE genres CASCADE;
+--DROP TABLE film_genres CASCADE;
+--DROP TABLE users CASCADE;
+--DROP TABLE friends CASCADE;
+--DROP TABLE likes CASCADE;
+--DROP TABLE film_mpas CASCADE;
 
 create table if not exists genres
 (
@@ -25,8 +33,8 @@ create table if not exists friends
     user_id   BIGINT,
     friend_id BIGINT,
 	confirmed boolean,
-    foreign key (user_id) references users (id),
-    foreign key (friend_id) references users (id),
+    foreign key (user_id) references users (id) on delete cascade,
+    foreign key (friend_id) references users (id) on delete cascade,
     primary key (user_id, friend_id)
 );
 
@@ -65,6 +73,21 @@ create table if not exists film_mpas
     foreign key (mpa_id) references mpas (id) on delete cascade,    
     primary key (film_id, mpa_id)
 );
+
+create table if not exists directors
+(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name        varchar(255) not null
+);
+
+create table if not exists film_directors
+(
+    film_id     BIGINT,
+    director_id BIGINT,
+    foreign key (film_id) references films (id) on delete cascade,
+    foreign key (director_id) references directors (id) on delete cascade,
+    primary key (film_id,director_id)
+ );
 -- Таблица активности пользователя
 CREATE TABLE IF NOT EXISTS user_activity (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
