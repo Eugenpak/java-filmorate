@@ -313,8 +313,23 @@ public class FilmService {
         Collection<Film> popFilm = likeDao.findPopularFilmsId(count).stream()
                 .map(p -> filmStorage.findFilmById(p.getFilmId()).get())
                 .collect(Collectors.toList());
+        List<Long> idPopularFilms = popFilm.stream()
+                .map(Film::getId)
+                .toList();
+        Collection<Film> allFilm = filmStorage.findAll();
+        allFilm.forEach(film -> {
+            if (!idPopularFilms.contains(film.getId())) {
+                popFilm.add(film);
+            }
+        });
         return getFieldsFilm(popFilm);
 
+    }
+
+    public void deleteFilm(Long filmId) {
+        log.info("Start delete film with ID = {}", filmId);
+        findFilmById(filmId);
+        filmStorage.delByFilmId(filmId);
     }
 
     public List<Film> getDirectorFilms(long directorId,String sortBy) {

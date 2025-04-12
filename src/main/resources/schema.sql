@@ -1,3 +1,11 @@
+--DROP TABLE mpas CASCADE;
+--DROP TABLE films CASCADE;
+--DROP TABLE genres CASCADE;
+--DROP TABLE film_genres CASCADE;
+--DROP TABLE users CASCADE;
+--DROP TABLE friends CASCADE;
+--DROP TABLE likes CASCADE;
+--DROP TABLE film_mpas CASCADE;
 
 create table if not exists genres
 (
@@ -25,8 +33,8 @@ create table if not exists friends
     user_id   BIGINT,
     friend_id BIGINT,
 	confirmed boolean,
-    foreign key (user_id) references users (id),
-    foreign key (friend_id) references users (id),
+    foreign key (user_id) references users (id) on delete cascade,
+    foreign key (friend_id) references users (id) on delete cascade,
     primary key (user_id, friend_id)
 );
 
