@@ -102,7 +102,7 @@ public class FilmService {
     }
 
     private Collection<Film> joinFilmDirector(Collection<Film> listFilm,Map<Long,Collection<Director>> dtoDirectors) {
-        log.info("F-S joinFilmDirector: {}",dtoDirectors);
+        log.info("F-S joinFilmDirector: {}", dtoDirectors);
         Collection<Film> fc = listFilm.stream()
                 .peek(f -> {
                     Optional<Collection<Director>> directorOpt = Optional.ofNullable(dtoDirectors.get(f.getId()));
