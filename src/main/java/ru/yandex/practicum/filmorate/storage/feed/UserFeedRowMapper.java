@@ -18,7 +18,7 @@ public class UserFeedRowMapper implements RowMapper<UserFeed> {
                 .eventType(rs.getString("event_type"))
                 .operation(rs.getString("operation"))
                 .eventId(rs.getLong("event_id"))
-                .timestamp(rs.getTimestamp("timestamp"))
+                .timestamp(rs.getTimestamp("timestamp").toLocalDateTime())
                 .build();
         return fromMapRow;
     }

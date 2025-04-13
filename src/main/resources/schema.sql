@@ -1,11 +1,14 @@
---DROP TABLE mpas CASCADE;
---DROP TABLE films CASCADE;
---DROP TABLE genres CASCADE;
---DROP TABLE film_genres CASCADE;
---DROP TABLE users CASCADE;
---DROP TABLE friends CASCADE;
---DROP TABLE likes CASCADE;
---DROP TABLE film_mpas CASCADE;
+DROP TABLE mpas CASCADE;
+DROP TABLE films CASCADE;
+DROP TABLE genres CASCADE;
+DROP TABLE film_genres CASCADE;
+DROP TABLE users CASCADE;
+DROP TABLE friends CASCADE;
+DROP TABLE likes CASCADE;
+DROP TABLE film_mpas CASCADE;
+DROP TABLE feed CASCADE;
+DROP TABLE film_directors CASCADE;
+DROP TABLE directors CASCADE;
 
 create table if not exists genres
 (
@@ -88,16 +91,15 @@ create table if not exists film_directors
     foreign key (director_id) references directors (id) on delete cascade,
     primary key (film_id,director_id)
  );
--- Таблица активности пользователя
-CREATE TABLE IF NOT EXISTS user_activity (
+
+create table if not exists feed (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT,
     event_type VARCHAR(100) NOT NULL,
     operation VARCHAR(50) NOT NULL,
     event_id BIGINT,
-    timestamp BIGINT,
-    FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
+    timestamp TIMESTAMP,
+    foreign key (user_id) references users (id) on delete cascade
 );
-    --Таблица user_activity связана с таблицей users через внешний ключ user_id. Также данные в поле related_id могут
-    --быть связаны с таблицами friends и likes, в зависимости от типа события, указанного в поле event_type.
-);
+
+
