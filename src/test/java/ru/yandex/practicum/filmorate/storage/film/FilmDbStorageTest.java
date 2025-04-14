@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -9,10 +10,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.like.LikeDaoImpl;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,10 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmDbStorageTest {
     private final FilmDbStorage filmDbStorage;
-
-    private final UserDbStorage userStorage;
-
-    private final LikeDaoImpl likeDao;
 
     private List<User> getTestUser() {
         User user1 = User.builder().email("test-one@mail.ru").login("login-A")
@@ -94,6 +90,32 @@ class FilmDbStorageTest {
                 .hasValueSatisfying(film ->
                         assertThat(film).hasFieldOrPropertyWithValue("description", "описание фильма А")
                 );
+    }
+
+    @Test
+    void testSearchByTitle() {
+        filmDbStorage.deleteAll();
+        assertEquals(0, filmDbStorage.findAll().size());
+        List<Film> allFilm = getTestFilm();
+        Film firstFilm = allFilm.getFirst();
+        Film secondFilm = allFilm.getLast();
+        filmDbStorage.create(firstFilm);
+        filmDbStorage.create(secondFilm);
+        List<Film> searchFilms = filmDbStorage.searchFilmByTitle("фильма В");
+        Assertions.assertEquals(secondFilm.getId(), searchFilms.getFirst().getId());
+    }
+
+    @Test
+    void testDeleteFilm() {
+        filmDbStorage.deleteAll();
+        assertEquals(0, filmDbStorage.findAll().size());
+        List<Film> allFilm = getTestFilm();
+        Film firstFilm = allFilm.getFirst();
+        Film secondFilm = allFilm.getLast();
+        filmDbStorage.create(firstFilm);
+        filmDbStorage.create(secondFilm);
+        filmDbStorage.delByFilmId(firstFilm.getId());
+        Assertions.assertEquals(secondFilm.getId(), new ArrayList<>(filmDbStorage.findAll()).getFirst().getId());
     }
 
     /*

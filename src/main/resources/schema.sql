@@ -6,6 +6,8 @@
 --DROP TABLE friends CASCADE;
 --DROP TABLE likes CASCADE;
 --DROP TABLE film_mpas CASCADE;
+--DROP TABLE directors CASCADE;
+--DROP TABLE film_directors CASCADE;
 
 create table if not exists genres
 (

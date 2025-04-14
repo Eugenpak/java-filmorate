@@ -102,7 +102,7 @@ public class FilmService {
     }
 
     private Collection<Film> joinFilmDirector(Collection<Film> listFilm,Map<Long,Collection<Director>> dtoDirectors) {
-        log.info("F-S joinFilmDirector: {}",dtoDirectors);
+        log.info("F-S joinFilmDirector: {}", dtoDirectors);
         Collection<Film> fc = listFilm.stream()
                 .peek(f -> {
                     Optional<Collection<Director>> directorOpt = Optional.ofNullable(dtoDirectors.get(f.getId()));
@@ -349,5 +349,24 @@ public class FilmService {
             result.add(mapFilm.get(i));
         }
         return result;
+    }
+
+    public Collection<Film> searchFilmOrDirector(String query, String by) {
+        List<Film> searchFilms;
+        if (query.equals("Empty") || by.equals("Not argument")) {
+            searchFilms = new ArrayList<>(getPopularFilms(1000));
+        } else {
+            String[] allArgs = by.split(",");
+            if (allArgs.length == 2) {
+                searchFilms = filmStorage.searchFilmByTitleAndDirector(query);
+            } else {
+                if (allArgs[0].equals("director")) {
+                    searchFilms = filmStorage.searchFilmByDirector(query);
+                } else {
+                    searchFilms = filmStorage.searchFilmByTitle(query);
+                }
+            }
+        }
+        return getFieldsFilm(searchFilms);
     }
 }
