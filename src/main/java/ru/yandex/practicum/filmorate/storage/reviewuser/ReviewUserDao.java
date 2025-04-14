@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.reviewuser;
 
 import ru.yandex.practicum.filmorate.model.ReviewUser;
-
 import java.util.List;
 import java.util.Optional;
 
