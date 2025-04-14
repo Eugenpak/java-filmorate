@@ -166,8 +166,8 @@ public class ReviewService {
         List<Long> reviewId = reviews.stream().map(Review::getId).toList();
         List<ReviewUser> ruList = reviewUserDao.getReviewUserByReviewId(reviewId);
 
-        for(Review el:reviews) {
-            int rating = ruList.stream().filter(r-> r.getReviewId().equals(el.getId()))
+        for (Review el:reviews) {
+            int rating = ruList.stream().filter(r -> r.getReviewId().equals(el.getId()))
                     .mapToInt(ReviewUser::getUsefulValue).sum();
             el.setUseful(rating);
         }
