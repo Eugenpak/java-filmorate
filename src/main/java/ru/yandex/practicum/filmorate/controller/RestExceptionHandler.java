@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.yandex.practicum.filmorate.exception.ErrorMessage;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ParameterNotValidException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.*;
 
 @ControllerAdvice
 @Slf4j
@@ -24,6 +21,13 @@ public class RestExceptionHandler {
     public ResponseEntity<ErrorMessage> handleValidationException(ValidationException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ErrorMessage(HttpStatus.BAD_REQUEST.value(), "ValidationException",e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(ReviewValidException.class)
+    public ResponseEntity<ErrorMessage> handleReviewValidException(ReviewValidException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ErrorMessage(HttpStatus.BAD_REQUEST.value(), "ReviewValidException",e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)
