@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review {
-    Long id;
+    Long reviewId;
     @NotNull String content;
     Boolean isPositive;
     Long userId;

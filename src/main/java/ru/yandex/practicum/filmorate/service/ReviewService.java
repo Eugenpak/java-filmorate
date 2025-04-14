@@ -62,8 +62,8 @@ public class ReviewService {
         // проверка полей Review
         checksReview(filmReview);
         Review review = reviewStorage.create(filmReview);
-        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getId()));
-        log.info("Добавлен отзыв с id = {}", review.getId());
+        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
+        log.info("Добавлен отзыв с id = {}", review.getReviewId());
         return review;
     }
 
@@ -72,16 +72,16 @@ public class ReviewService {
         // проверка полей Review
         checksReview(filmReview);
         Review review = reviewStorage.update(filmReview);
-        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getId()));
-        log.info("Обновлён отзыв с id = {}", review.getId());
+        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
+        log.info("Обновлён отзыв с id = {}", review.getReviewId());
         return review;
     }
 
     public Review getById(long id) {
         log.debug("Rev-S getById(id: {})", id);
         Review review = checkExistsReview(id);
-        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getId()));
-        log.info("Найден отзыв с id = {}", review.getId());
+        review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
+        log.info("Найден отзыв с id = {}", review.getReviewId());
         return review;
     }
 
@@ -163,11 +163,11 @@ public class ReviewService {
 
     private List<Review> addBatchRatingByListReview(List<Review> reviews) {
         if (reviews.size() == 0) return reviews;
-        List<Long> reviewId = reviews.stream().map(Review::getId).toList();
+        List<Long> reviewId = reviews.stream().map(Review::getReviewId).toList();
         List<ReviewUser> ruList = reviewUserDao.getReviewUserByReviewId(reviewId);
 
         for (Review el:reviews) {
-            int rating = ruList.stream().filter(r -> r.getReviewId().equals(el.getId()))
+            int rating = ruList.stream().filter(r -> r.getReviewId().equals(el.getReviewId()))
                     .mapToInt(ReviewUser::getUsefulValue).sum();
             el.setUseful(rating);
         }

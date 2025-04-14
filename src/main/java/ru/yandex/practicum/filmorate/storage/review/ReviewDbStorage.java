@@ -55,7 +55,7 @@ public class ReviewDbStorage extends BaseDbStorage<Review> implements ReviewStor
                 filmReview.getFilmId()
         );
         log.info("ReviewDbStorage create(id={})", id);
-        filmReview.setId(id);
+        filmReview.setReviewId(id);
         return filmReview;
     }
 
@@ -68,7 +68,7 @@ public class ReviewDbStorage extends BaseDbStorage<Review> implements ReviewStor
                 filmReview.getIsPositive(),
                 filmReview.getUserId(),
                 filmReview.getFilmId(),
-                filmReview.getId()
+                filmReview.getReviewId()
         );
         return filmReview;
     }
