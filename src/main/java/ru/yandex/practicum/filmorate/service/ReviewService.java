@@ -199,6 +199,7 @@ public class ReviewService {
         }
     }
 
+
     private String getStringByIsUseful(boolean isUseful) {
         if (isUseful) return "лайк";
         else return "дизлайк";
