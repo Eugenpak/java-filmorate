@@ -35,9 +35,9 @@ public class LikeDaoImpl implements LikeDao {
     private static final String FIND_POPULAR_FILMS_BY_GENRE_YEAR_QUERY =
             "SELECT f.id AS film_id, COUNT(l.user_id) AS like_count " +
                     "FROM films f " +
-                    "JOIN film_genre fg ON f.id = fg.film_id " +
+                    "JOIN film_genres fg ON f.id = fg.film_id " +
                     "LEFT JOIN likes l ON f.id = l.film_id " +
-                    "WHERE fg.genre_id = ? AND EXTRACT(YEAR FROM f.release_date) = ? " +
+                    "WHERE fg.genre_id = ? AND YEAR(f.release_date) = ? " +
                     "GROUP BY f.id " +
                     "ORDER BY like_count DESC " +
                     "LIMIT ?";

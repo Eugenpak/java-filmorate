@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -81,7 +82,8 @@ public class FilmController2MockitoTest {
         List<Film> expectedFilms = List.of(getTestFilm());
         when(filmService.getPopularFilms(10)).thenReturn(expectedFilms);
 
-        List<Film> actualFilms = filmController.getPopularFilms(10).stream().toList();
+        ResponseEntity<List<Film>> response = filmController.getPopularFilms(10, null, null);
+        List<Film> actualFilms = response.getBody();
         verify(filmService, times(1)).getPopularFilms(10);
         assertEquals(expectedFilms.size(), actualFilms.size());
         assertSame(expectedFilms.get(0), actualFilms.get(0));
