@@ -88,3 +88,25 @@ create table if not exists film_directors
     foreign key (director_id) references directors (id) on delete cascade,
     primary key (film_id,director_id)
  );
+
+ create table if not exists reviews
+ (
+     id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+     content        varchar,
+     is_positive    boolean,
+     film_id        BIGINT,
+     user_id        BIGINT,
+     useful         int,
+     foreign key (film_id) references films (id) on delete cascade,
+     foreign key (user_id) references users (id) on delete cascade
+ );
+
+ create table if not exists review_users
+ (
+     review_id      BIGINT,
+     user_id        BIGINT,
+     is_useful      boolean not null,
+     primary key (review_id,user_id),
+     foreign key (user_id) references users (id) on delete cascade,
+     foreign key (review_id) references reviews (id) on delete cascade
+     );
