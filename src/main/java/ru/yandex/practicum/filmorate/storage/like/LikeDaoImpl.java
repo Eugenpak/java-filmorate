@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.model.PopularFilm;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -26,10 +28,19 @@ public class LikeDaoImpl implements LikeDao {
             "COUNT(user_id) AS like_count FROM likes GROUP BY film_id " +
             "ORDER BY like_count DESC LIMIT ?";
 
-
     private static final String GET_FILMS_BY_USER_QUERY = "SELECT film_id FROM likes WHERE user_id = ?";
 
     private static final String GET_USERS_BY_FILM_QUERY = "SELECT user_id FROM likes WHERE film_id = ?";
+
+    private static final String FIND_POPULAR_FILMS_BY_GENRE_YEAR_QUERY =
+            "SELECT f.id AS film_id, COUNT(l.user_id) AS like_count " +
+                    "FROM films f " +
+                    "JOIN film_genre fg ON f.id = fg.film_id " +
+                    "LEFT JOIN likes l ON f.id = l.film_id " +
+                    "WHERE fg.genre_id = ? AND EXTRACT(YEAR FROM f.release_date) = ? " +
+                    "GROUP BY f.id " +
+                    "ORDER BY like_count DESC " +
+                    "LIMIT ?";
 
     public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
         this.jdbcTemplate = jdbcTemplate;
@@ -78,5 +89,17 @@ public class LikeDaoImpl implements LikeDao {
         Set<Long> userIds = new HashSet<>(jdbcTemplate.queryForList(GET_USERS_BY_FILM_QUERY, Long.class, filmId));
         log.trace("Получен список id пользователей, поставивших лайк фильму {}: {}.", filmId, userIds);
         return userIds;
+    }
+
+    @Override
+    public List<Long> findPopularFilmsByGenreYear(int count, long genreId, int year) {
+        log.debug("LikeDaoImpl findPopularFilmsByGenreYear: count={}, genreId={}, year={}", count, genreId, year);
+        List<PopularFilm> popularFilms = jdbcTemplate.query(
+                FIND_POPULAR_FILMS_BY_GENRE_YEAR_QUERY,
+                mapperPop,
+                genreId, year, count);
+        return popularFilms.stream()
+                .map(PopularFilm::getFilmId)
+                .collect(Collectors.toList());
     }
 }
