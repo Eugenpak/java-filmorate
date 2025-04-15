@@ -1,11 +1,13 @@
---DROP TABLE mpas CASCADE;
---DROP TABLE films CASCADE;
---DROP TABLE genres CASCADE;
---DROP TABLE film_genres CASCADE;
---DROP TABLE users CASCADE;
---DROP TABLE friends CASCADE;
---DROP TABLE likes CASCADE;
---DROP TABLE film_mpas CASCADE;
+DROP TABLE mpas CASCADE;
+DROP TABLE films CASCADE;
+DROP TABLE genres CASCADE;
+DROP TABLE film_genres CASCADE;
+DROP TABLE users CASCADE;
+DROP TABLE friends CASCADE;
+DROP TABLE likes CASCADE;
+DROP TABLE film_mpas CASCADE;
+DROP TABLE directors CASCADE;
+DROP TABLE film_directors CASCADE;
 
 create table if not exists genres
 (

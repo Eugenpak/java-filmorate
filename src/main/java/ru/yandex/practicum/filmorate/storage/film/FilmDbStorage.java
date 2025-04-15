@@ -130,6 +130,38 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         List<FilmDirector> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmDirector.class));
         return result.stream().map(FilmDirector::getFilmId).toList();
     }
+
+    @Override
+    public List<Film> getGeneralFilmUserAndHisFriend(long userId, long friendId) {
+        log.info("Пришел запрос в FilmStorage получить список общих фильмов");
+        String sql = "SELECT f.id, f.name, COUNT(*) AS likes_count\n" +
+                "FROM films f\n" +
+                "JOIN likes l1 ON f.id = l1.film_id\n" +
+                "JOIN likes l2 ON f.id = l2.film_id\n" +
+                "JOIN friends fr ON l1.user_id = fr.user_id AND l2.user_id = fr.friend_id\n" +
+                "WHERE fr.confirmed = TRUE\n" +
+                "  AND fr.user_id = ?\n" +
+                "  AND fr.friend_id = ?\n" +
+                "GROUP BY f.id, f.name\n" +
+                "ORDER BY likes_count DESC;";
+
+        try {
+            List<Film> result = jdbc.query(sql, mapper, userId, friendId);
+            log.info("RESUUUUUULT {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("Ошибка при получении списка общих фильмов", e);
+            throw e; // или обработать исключение другим способом
+        }
+    }
 }
 
 
+/*"SELECT DISTINCT f.id, f.name\n" +
+                "FROM films f\n" +
+                "JOIN likes l1 ON f.id = l1.film_id\n" +
+                "JOIN likes l2 ON f.id = l2.film_id\n" +
+                "JOIN friends fr ON l1.user_id = fr.user_id AND l2.user_id = fr.friend_id\n" +
+                "WHERE fr.confirmed = TRUE\n" +
+                "  AND fr.user_id = ?\n" +
+                "  AND fr.friend_id = ?;";*/

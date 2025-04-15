@@ -350,4 +350,9 @@ public class FilmService {
         }
         return result;
     }
+
+    public List<Film> getGeneralFilmUserAndHisFriend(long userId, long friendId){
+        log.info("Пришел запрос в FilmService получить список общих фильмов");
+        return filmStorage.getGeneralFilmUserAndHisFriend(userId, friendId);
+    }
 }
