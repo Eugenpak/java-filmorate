@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,8 +25,8 @@ class MpaServiceTest {
     private MpaService testMpaService;
 
     private List<Mpa> getMpas() {
-        Mpa one = new Mpa(1L,"G");
-        Mpa two = new Mpa(2L,"PG");
+        Mpa one = new Mpa(1L, "G");
+        Mpa two = new Mpa(2L, "PG");
         return List.of(one, two);
     }
 

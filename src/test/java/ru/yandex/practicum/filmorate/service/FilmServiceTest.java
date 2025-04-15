@@ -1,20 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import ru.yandex.practicum.filmorate.model.Film;
-
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.filmgenre.FilmGenreDao;
-import ru.yandex.practicum.filmorate.storage.filmmpa.FilmMpaDao;
-import ru.yandex.practicum.filmorate.storage.like.LikeDao;
-
-import java.time.LocalDate;
 //import static org.junit.jupiter.api.Assertions.*;
 //import static org.mockito.Mockito.*;
 
@@ -83,7 +69,8 @@ class FilmServiceTest {
         */
     }
 
-    @Test void update() { /*
+    @Test
+    void update() { /*
         Film expectedFilm = getTestFilm();
         when(filmStorage.update(expectedFilm)).thenReturn(expectedFilm);
         when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));
@@ -97,7 +84,8 @@ class FilmServiceTest {
         */
     }
 
-    @Test void addLike() { /*
+    @Test
+    void addLike() { /*
         Film expectedFilm = getTestFilm();
         when(filmStorage.findFilmById(1)).thenReturn(Optional.of(expectedFilm));
         User expectedUser = getTestUser();
@@ -110,7 +98,8 @@ class FilmServiceTest {
         */
     }
 
-    @Test void deleteLike() {/*
+    @Test
+    void deleteLike() {/*
         Film expectedFilm = getTestFilm();
         when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));
         User expectedUser = getTestUser();
@@ -123,7 +112,8 @@ class FilmServiceTest {
         */
     }
 
-    @Test void getPopularFilms() {
+    @Test
+    void getPopularFilms() {
         /*
         int count = 1000;
         Film expectedFilms = getTestFilm();
@@ -138,7 +128,8 @@ class FilmServiceTest {
         */
     }
 
-    @Test void findFilmById() {
+    @Test
+    void findFilmById() {
         /*
         Film expectedFilm = getTestFilm();
         when(filmStorage.findFilmById(expectedFilm.getId())).thenReturn(Optional.of(expectedFilm));

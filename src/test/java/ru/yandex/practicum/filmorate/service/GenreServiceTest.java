@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,8 +26,8 @@ class GenreServiceTest {
 
     private List<Genre> getGenres() {
         // Mpa: (4,'R'), (5,'NC-17');
-        Genre one = new Genre(1L,"Комедия");
-        Genre two = new Genre(2L,"Драма");
+        Genre one = new Genre(1L, "Комедия");
+        Genre two = new Genre(2L, "Драма");
         return List.of(one, two);
     }
 
