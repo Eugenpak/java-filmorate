@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
@@ -24,6 +25,9 @@ class UserServiceTest {
 
     @Mock
     private FriendStorage friendStorage;
+
+    @Mock
+    private FeedStorage feedStorage;
 
     @InjectMocks
     private UserService userService;
