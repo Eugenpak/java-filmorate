@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -31,13 +30,12 @@ public class FeedDbStorage extends BaseDbStorage<UserFeed> implements FeedStorag
 
 
     @Override
-    public UserFeed addFeed(long userId, String eventType, String operation, long eventId) {
-        String sql = "INSERT INTO feed (user_id, event_type, operation, event_id, timestamp) VALUES (?, ?, ?, ?, ?)";
-        //Date date = new Date();
-        LocalDateTime localDateTime = LocalDateTime.now();
+    public UserFeed addFeed(long userId, String eventType, String operation, long entityId) {
+        String sql = "INSERT INTO feed (user_id, event_type, operation, entity_id, timestamp) VALUES (?, ?, ?, ?, ?)";
+        long timestamp = System.currentTimeMillis();
 
         try {
-            jdbc.update(sql, userId, eventType, operation, eventId, localDateTime);
+            jdbc.update(sql, userId, eventType, operation, entityId, timestamp);
             log.info("Feed added successfully for user ID: {}", userId);
         } catch (Exception e) {
             log.error("Error adding feed for user ID: {}, {}", userId, e.getMessage());
@@ -48,8 +46,8 @@ public class FeedDbStorage extends BaseDbStorage<UserFeed> implements FeedStorag
                 .userId(userId)
                 .eventType(eventType)
                 .operation(operation)
-                .eventId(eventId)
-                .timestamp(localDateTime)
+                .entityId(entityId)
+                .timestamp(timestamp)
                 .build();
     }
 }

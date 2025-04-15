@@ -8,6 +8,9 @@
 --DROP TABLE film_mpas CASCADE;
 --DROP TABLE directors CASCADE;
 --DROP TABLE film_directors CASCADE;
+--DROP TABLE feed CASCADE;
+--DROP TABLE reviews CASCADE;
+--DROP TABLE review_users CASCADE;
 
 create table if not exists genres
 (
@@ -96,13 +99,10 @@ create table if not exists feed (
     user_id BIGINT,
     event_type VARCHAR(100) NOT NULL,
     operation VARCHAR(50) NOT NULL,
-    event_id BIGINT,
-    timestamp TIMESTAMP,
+    entity_id BIGINT,
+    timestamp BIGINT,
     foreign key (user_id) references users (id) on delete cascade
 );
-
-
-
 
  create table if not exists reviews
  (

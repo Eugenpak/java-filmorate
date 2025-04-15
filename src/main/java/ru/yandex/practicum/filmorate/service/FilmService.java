@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.filmgenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.storage.filmmpa.FilmMpaDao;
 import ru.yandex.practicum.filmorate.storage.like.LikeDao;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -301,10 +300,9 @@ public class FilmService {
             throw new ValidationException(msg);
         }
 
-        log.info("Перед сохранением АКТИВНОСТИ");
+        log.info("Start F-S addLike(filmId:{},userId:{})", filmId, userId);
         feedStorage.addFeed(userId, "LIKE", "ADD", filmId);
-                //new java.sql.Timestamp(System.currentTimeMillis()));
-        log.info("После сохранением АКТИВНОСТИ");
+        log.info("Finish F-S addLike");
     }
 
     public void deleteLike(long filmId, long userId) {
@@ -316,10 +314,9 @@ public class FilmService {
         log.info("Пользователь с userId=" + userId +
                 " удалил лайк к фильму с filmId=" + filmId);
 
-        log.info("Перед сохранением АКТИВНОСТИ");
-        feedStorage.addFeed(userId, "LIKE", "DELETE", filmId);
-                //new java.sql.Timestamp(System.currentTimeMillis()));
-        log.info("После сохранением АКТИВНОСТИ");
+        log.info("Start F-S deleteLike(userId:{},filmId:{})", userId, filmId);
+        feedStorage.addFeed(userId, "LIKE", "REMOVE", filmId);
+        log.info("Finish F-S deleteLike");
     }
 
     public Collection<Film> getPopularFilms(int count) {

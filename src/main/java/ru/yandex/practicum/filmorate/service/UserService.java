@@ -124,10 +124,9 @@ public class UserService {
         log.info("Service user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> addFriend()");
 
-
-        log.info("Перед сохранением АКТИВНОСТИ");
+        log.info("Start U-S addFriend(userId:{},friendId:{})", userId, friendId);
         feedStorage.addFeed(userId, "FRIEND", "ADD", friendId);
-        log.info("После сохранением АКТИВНОСТИ");
+        log.info("Finish U-S addFriend");
 
     }
 
@@ -139,9 +138,9 @@ public class UserService {
         log.info("U-S удален друг user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> removeFromFriends()");
 
-        log.info("Перед сохранением АКТИВНОСТИ");
-        feedStorage.addFeed(userId, "FRIEND", "DELETE", friendId);
-        log.info("После сохранением АКТИВНОСТИ");
+        log.info("Start U-S removeFromFriends(userId:{},friendId:{})", userId, friendId);
+        feedStorage.addFeed(userId, "FRIEND", "REMOVE", friendId);
+        log.info("Finish U-S removeFromFriends");
     }
 
     public Collection<User> getAllFriends(long userId) {

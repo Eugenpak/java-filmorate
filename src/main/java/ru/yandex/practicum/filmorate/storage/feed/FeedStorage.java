@@ -7,5 +7,5 @@ import java.util.List;
 public interface FeedStorage {
     List<UserFeed> getUserFeedById(long id);
 
-    UserFeed addFeed(long userId, String eventType, String operation, long eventId);
+    UserFeed addFeed(long userId, String eventType, String operation, long entityId);
 }
