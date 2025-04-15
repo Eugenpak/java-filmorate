@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ParameterNotValidException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.filmdirector.FilmDirectorDao;
 import ru.yandex.practicum.filmorate.storage.filmgenre.FilmGenreDao;
@@ -30,6 +31,7 @@ public class FilmService {
     private final LikeDao likeDao;
     private final DirectorService directorService;
     private final FilmDirectorDao filmDirectorDao;
+    private final FeedStorage feedStorage;
 
     private static final LocalDate MY_CONSTANT = LocalDate.of(1895, 12, 28);
 
@@ -42,7 +44,8 @@ public class FilmService {
                        GenreService genreService,
                        MpaService mpaService,
                        DirectorService directorService,
-                       FilmDirectorDao filmDirectorDao) {
+                       FilmDirectorDao filmDirectorDao,
+                       FeedStorage feedStorage) {
         this.filmStorage = filmStorage;
         this.userService = userService;
         this.filmGenreDao = filmGenreDao;
@@ -52,6 +55,7 @@ public class FilmService {
         this.mpaService = mpaService;
         this.directorService = directorService;
         this.filmDirectorDao = filmDirectorDao;
+        this.feedStorage = feedStorage;
     }
 
     public Collection<Film> findAll() {
@@ -295,6 +299,10 @@ public class FilmService {
             log.info(msg);
             throw new ValidationException(msg);
         }
+
+        log.info("Start F-S addLike(filmId:{},userId:{})", filmId, userId);
+        feedStorage.addFeed(userId, "LIKE", "ADD", filmId);
+        log.info("Finish F-S addLike");
     }
 
     public void deleteLike(long filmId, long userId) {
@@ -305,6 +313,10 @@ public class FilmService {
         likeDao.delete(filmId, userId);
         log.info("Пользователь с userId=" + userId +
                 " удалил лайк к фильму с filmId=" + filmId);
+
+        log.info("Start F-S deleteLike(userId:{},filmId:{})", userId, filmId);
+        feedStorage.addFeed(userId, "LIKE", "REMOVE", filmId);
+        log.info("Finish F-S deleteLike");
     }
 
     public Collection<Film> getPopularFilms(int count) {
@@ -348,6 +360,44 @@ public class FilmService {
             result.add(mapFilm.get(i));
         }
         return result;
+    }
+
+    public Collection<Film> searchFilmOrDirector(String query, String by) {
+        List<Film> searchFilms;
+        if (query.equals("Empty") || by.equals("Not argument")) {
+            searchFilms = new ArrayList<>(getPopularFilms(1000));
+        } else {
+            String[] allArgs = by.split(",");
+            if (allArgs.length == 2) {
+                searchFilms = filmStorage.searchFilmByTitleAndDirector(query);
+            } else {
+                if (allArgs[0].equals("director")) {
+                    searchFilms = filmStorage.searchFilmByDirector(query);
+                } else {
+                    searchFilms = filmStorage.searchFilmByTitle(query);
+                }
+            }
+        }
+        return getFieldsFilm(searchFilms);
+    }
+
+    public List<Film> getPopularFilmsByGenreAndYear(int count, long genreId, int year) {
+        log.info("FilmService getPopularFilmsByGenreAndYear: count={}, genreId={}, year={}", count, genreId, year);
+        List<Long> filmIds = likeDao.findPopularFilmsByGenreYear(count, genreId, year);
+        if (filmIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Film> films = filmStorage.getFilmsByListFilmId(filmIds);
+        Map<Long, Film> filmMap = films.stream()
+                .collect(Collectors.toMap(Film::getId, film -> film));
+        List<Film> sortFilms = filmIds.stream()
+                .map(filmMap::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // донасыщаем дополнительной информацией (жанры, mpa, режиссёры)
+        return new ArrayList<>(getFieldsFilm(sortFilms));
     }
 
     public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {

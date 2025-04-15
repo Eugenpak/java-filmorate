@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
+
 import java.util.Collection;
+import java.util.List;
 
 
 @RestController
@@ -67,7 +70,7 @@ public class UserController {
     @GetMapping(value = "/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriends(@NotNull @PathVariable long id, @NotNull @PathVariable long otherId) {
         log.info("UC User getCommonFriends(id=" + id + ",otherId=" + otherId + ")");
-        Collection<User> debugList = userService.getCommonFriends(id,otherId);
+        Collection<User> debugList = userService.getCommonFriends(id, otherId);
         log.info("UC User getCommonFriends()=" + debugList);
         return debugList;
     }
@@ -85,6 +88,12 @@ public class UserController {
         log.info("UC User delUserById(id=" + id + ")");
         userService.delUserById(id);
         log.info("UC delUserById(id=" + id + ") удален!");
+    }
+
+    @GetMapping(value = "/{id}/feed")
+    public List<UserFeed> getUserFeedById(@NotNull @PathVariable long id) {
+        log.info("UC UserFeed getUserFeedById(id=" + id + ")");
+        return userService.getUserFeedById(id);
     }
 }
 

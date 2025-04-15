@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -64,9 +65,19 @@ public class FilmController {
     }
 
     @GetMapping(value = "/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        log.info("UC Film getPopularFilms(count=" + count + ")");
-        return filmService.getPopularFilms(count);
+    public ResponseEntity<List<Film>> getPopularFilms(
+            @RequestParam(name = "count", defaultValue = "10") int count,
+            @RequestParam(name = "genreId", required = false) Long genreId,
+            @RequestParam(name = "year", required = false) Integer year) {
+        log.info("Получение популярных фильмов: count={}, genreId={}, year={}", count, genreId, year);
+        List<Film> films;
+        if (genreId != null && year != null) {
+            films = filmService.getPopularFilmsByGenreAndYear(count, genreId, year);
+        } else {
+            // в случае, если фильтры не указаны, возвращаем общий список популярных фильмов
+            films = new ArrayList<>(filmService.getPopularFilms(count));
+        }
+        return ResponseEntity.ok(films);
     }
 
     @GetMapping(value = "/{id}")
@@ -94,5 +105,11 @@ public class FilmController {
                                                     @RequestParam long friendId) {
         log.info("Пришел запрос в контролер на  получение списока общих фильмов");
         return filmService.getCommonFilmUserAndHisFriend(userId, friendId);
+    }
+
+    @GetMapping("/search")
+    public Collection<Film> searchFilmOrDirector(@RequestParam(defaultValue = "Empty") String query,
+                                     @RequestParam(defaultValue = "Not argument") String by) {
+        return filmService.searchFilmOrDirector(query, by);
     }
 }

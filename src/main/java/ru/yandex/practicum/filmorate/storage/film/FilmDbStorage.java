@@ -135,6 +135,24 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         return result.stream().map(FilmDirector::getFilmId).toList();
     }
 
+    public List<Film> searchFilmByTitle(String query) {
+        return jdbc.query("SELECT * FROM films WHERE name ILIKE ('%" + query + "%')", mapper);
+    }
+
+    public List<Film> searchFilmByDirector(String query) {
+        return jdbc.query("SELECT f.* " +
+                "FROM FILMS f JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
+                "JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
+                "WHERE d.NAME ILIKE ('%" + query + "%')", mapper);
+    }
+
+    public List<Film> searchFilmByTitleAndDirector(String query) {
+        return jdbc.query("SELECT DISTINCT f.* " +
+                "FROM FILMS f LEFT JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
+                "LEFT JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
+                "WHERE d.NAME ILIKE ('%" + query + "%')" + " OR f.NAME ILIKE ('%" + query + "%')", mapper);
+    }
+
     @Override
     public List<Film> getGeneralFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmStorage получить список общих фильмов");
