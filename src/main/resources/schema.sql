@@ -1,14 +1,3 @@
-DROP TABLE mpas CASCADE;
-DROP TABLE films CASCADE;
-DROP TABLE genres CASCADE;
-DROP TABLE film_genres CASCADE;
-DROP TABLE users CASCADE;
-DROP TABLE friends CASCADE;
-DROP TABLE likes CASCADE;
-DROP TABLE film_mpas CASCADE;
-DROP TABLE feed CASCADE;
-DROP TABLE film_directors CASCADE;
-DROP TABLE directors CASCADE;
 --DROP TABLE mpas CASCADE;
 --DROP TABLE films CASCADE;
 --DROP TABLE genres CASCADE;
@@ -113,3 +102,26 @@ create table if not exists feed (
 );
 
 
+
+
+ create table if not exists reviews
+ (
+     id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+     content        varchar,
+     is_positive    boolean,
+     film_id        BIGINT,
+     user_id        BIGINT,
+     useful         int,
+     foreign key (film_id) references films (id) on delete cascade,
+     foreign key (user_id) references users (id) on delete cascade
+ );
+
+ create table if not exists review_users
+ (
+     review_id      BIGINT,
+     user_id        BIGINT,
+     is_useful      boolean not null,
+     primary key (review_id,user_id),
+     foreign key (user_id) references users (id) on delete cascade,
+     foreign key (review_id) references reviews (id) on delete cascade
+     );

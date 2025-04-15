@@ -383,4 +383,23 @@ public class FilmService {
         }
         return getFieldsFilm(searchFilms);
     }
+
+    public List<Film> getPopularFilmsByGenreAndYear(int count, long genreId, int year) {
+        log.info("FilmService getPopularFilmsByGenreAndYear: count={}, genreId={}, year={}", count, genreId, year);
+        List<Long> filmIds = likeDao.findPopularFilmsByGenreYear(count, genreId, year);
+        if (filmIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Film> films = filmStorage.getFilmsByListFilmId(filmIds);
+        Map<Long, Film> filmMap = films.stream()
+                .collect(Collectors.toMap(Film::getId, film -> film));
+        List<Film> sortFilms = filmIds.stream()
+                .map(filmMap::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // донасыщаем дополнительной информацией (жанры, mpa, режиссёры)
+        return new ArrayList<>(getFieldsFilm(sortFilms));
+    }
 }
