@@ -12,15 +12,15 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT) //RANDOM_PORT
 @ExtendWith(MockitoExtension.class)
@@ -48,15 +48,15 @@ class UserControllerTest {
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(LocalDate.of(1970,1,1)).build();
+                .name("name").birthday(LocalDate.of(1970, 1, 1)).build();
     }
 
     @Test
     void probaAwa() {
         ResponseEntity<User[]> entity = template.getForEntity("/users", User[].class);
 
-        assertEquals(HttpStatus.OK,entity.getStatusCode());
-        assertEquals(MediaType.APPLICATION_JSON,entity.getHeaders().getContentType());
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, entity.getHeaders().getContentType());
 
         User[] users = entity.getBody();
     }
@@ -68,10 +68,9 @@ class UserControllerTest {
     }
 
 
-
     @Test
     void shouldNotBlankEmailValidation() {
-        LocalDate birthday = LocalDate.of(1970,1,1); // 1970-01-01
+        LocalDate birthday = LocalDate.of(1970, 1, 1); // 1970-01-01
         User user = User.builder()
                 .id(1L)
                 .email("")
@@ -82,13 +81,13 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException ex) {
-            assertEquals("email: must not be blank",ex.getMessage());
+            assertEquals("email: must not be blank", ex.getMessage());
         }
     }
 
     @Test
     void shouldNoPassEmailValidation() {
-        LocalDate birthday = LocalDate.of(1970,1,1); // 1970-01-01
+        LocalDate birthday = LocalDate.of(1970, 1, 1); // 1970-01-01
         User user = User.builder()
                 .id(1L)
                 .email("testmail.ru@")
@@ -99,13 +98,13 @@ class UserControllerTest {
         try {
             validateInput(user);
         } catch (ConstraintViolationException ex) {
-            assertEquals(ex.getMessage(),"email: Недопустимый email. Попробуйте снова.");
+            assertEquals(ex.getMessage(), "email: Недопустимый email. Попробуйте снова.");
         }
     }
 
     @Test
     void shouldNotPassLoginValidation() {
-        LocalDate birthday = LocalDate.of(1970,1,1); // 1970-01-01
+        LocalDate birthday = LocalDate.of(1970, 1, 1); // 1970-01-01
         User user = User.builder()
                 .id(1L)
                 .email("test@mail.ru")
@@ -115,8 +114,8 @@ class UserControllerTest {
                 .build();
         try {
             validateInput(user);
-        } catch (ConstraintViolationException  ex) {
-            assertEquals("login: must not be blank",ex.getMessage());
+        } catch (ConstraintViolationException ex) {
+            assertEquals("login: must not be blank", ex.getMessage());
         }
     }
 

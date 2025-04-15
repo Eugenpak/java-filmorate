@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.ReviewUser;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.reviewuser.ReviewUserDao;
 
@@ -24,17 +25,20 @@ public class ReviewService {
     private final UserService userService;
     private final FilmService filmService;
     private final ReviewUserDao reviewUserDao;
+    private final FeedStorage feedStorage;
 
     @Autowired
     public ReviewService(@Qualifier("ReviewDbStorage") ReviewStorage reviewStorage,
                          UserService userService,
                          FilmService filmService,
-                         ReviewUserDao reviewUserDao
-                        ) {
+                         ReviewUserDao reviewUserDao,
+                         FeedStorage feedStorage
+    ) {
         this.reviewStorage = reviewStorage;
         this.userService = userService;
         this.filmService = filmService;
         this.reviewUserDao = reviewUserDao;
+        this.feedStorage = feedStorage;
     }
 
     public List<Review> getAll(long filmId, int count) {
@@ -64,6 +68,10 @@ public class ReviewService {
         Review review = reviewStorage.create(filmReview);
         review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
         log.info("Добавлен отзыв с id = {}", review.getReviewId());
+
+        log.info("Start R-S add(userId:{},reviewId:{})", filmReview.getUserId(), filmReview.getReviewId());
+        feedStorage.addFeed(filmReview.getUserId(), "REVIEW", "ADD", filmReview.getReviewId());
+        log.info("Finish R-S -> add");
         return review;
     }
 
@@ -74,6 +82,10 @@ public class ReviewService {
         Review review = reviewStorage.update(filmReview);
         review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
         log.info("Обновлён отзыв с id = {}", review.getReviewId());
+
+        log.info("Start R-S update(userId:{},reviewId:{})", filmReview.getUserId(), filmReview.getReviewId());
+        feedStorage.addFeed(filmReview.getUserId(), "REVIEW", "UPDATE", filmReview.getReviewId());
+        log.info("Finish R-S -> update");
         return review;
     }
 
@@ -90,6 +102,10 @@ public class ReviewService {
         Review review = checkExistsReview(id);
         reviewStorage.delByReviewId(id);
         log.debug("Удалён отзыв {}", review);
+
+        log.info("Start R-S delete(userId:{},reviewId:{})", review.getUserId(), review.getReviewId());
+        feedStorage.addFeed(review.getUserId(), "REVIEW", "REMOVE", review.getReviewId());
+        log.info("Finish R-S -> delete");
     }
 
     public void addLikeToFilmReview(long reviewId, long userId) {
@@ -149,7 +165,7 @@ public class ReviewService {
         userService.findUserById(userId);
         checkExistsReview(reviewId);
         // Добавление лайк/дизлайк в review_users. isUseful = true -> лайк. isUseful = false -> дизлайк.
-        checkReviewUserEntity(OperationType.ADD,reviewId,userId,isUseful);
+        checkReviewUserEntity(OperationType.ADD, reviewId, userId, isUseful);
         reviewUserDao.add(reviewId, userId, isUseful);
     }
 
@@ -157,7 +173,7 @@ public class ReviewService {
         userService.findUserById(userId);
         checkExistsReview(reviewId);
         // Удаление лайк/дизлайк в review_users.
-        checkReviewUserEntity(OperationType.DELETE,reviewId,userId,isUseful);
+        checkReviewUserEntity(OperationType.DELETE, reviewId, userId, isUseful);
         reviewUserDao.delete(reviewId, userId);
     }
 
@@ -166,7 +182,7 @@ public class ReviewService {
         List<Long> reviewId = reviews.stream().map(Review::getReviewId).toList();
         List<ReviewUser> ruList = reviewUserDao.getReviewUserByReviewId(reviewId);
 
-        for (Review el:reviews) {
+        for (Review el : reviews) {
             int rating = ruList.stream().filter(r -> r.getReviewId().equals(el.getReviewId()))
                     .mapToInt(ReviewUser::getUsefulValue).sum();
             el.setUseful(rating);
@@ -175,7 +191,7 @@ public class ReviewService {
     }
 
     private void checkReviewUserEntity(OperationType operation, long reviewId, long userId, boolean isUseful) {
-        Optional<ReviewUser> ruOpt = reviewUserDao.getReviewUserEntity(reviewId,userId);
+        Optional<ReviewUser> ruOpt = reviewUserDao.getReviewUserEntity(reviewId, userId);
         // isUseful = true -> лайк. isUseful = false -> дизлайк.
 
         if (ruOpt.isPresent() & operation == OperationType.ADD) {
@@ -186,7 +202,7 @@ public class ReviewService {
                 log.info(msg);
                 throw new ValidationException(msg);
             } else {
-                reviewUserDao.delete(reviewId,userId);
+                reviewUserDao.delete(reviewId, userId);
                 log.info("Удаление сущности ReviewUser для инвертации лайк/дизлайк");
             }
         }
