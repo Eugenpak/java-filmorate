@@ -399,4 +399,10 @@ public class FilmService {
         // донасыщаем дополнительной информацией (жанры, mpa, режиссёры)
         return new ArrayList<>(getFieldsFilm(sortFilms));
     }
+
+    public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
+        log.info("Пришел запрос в FilmService получить список общих фильмов");
+        List<Film> films = filmStorage.getCommonFilmUserAndHisFriend(userId, friendId);
+        return (List<Film>) getFieldsFilm(films);
+    }
 }

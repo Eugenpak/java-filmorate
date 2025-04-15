@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -93,15 +95,22 @@ public class FilmController {
 
     @GetMapping(value = "/director/{directorId}")
     public List<Film> getDirectorFilms(@NotNull @PathVariable long directorId,
-                                             @RequestParam(defaultValue = "like") String sortBy) {
-        log.info("UC Film getDirectorFilms(directorId={}, sortBy={})",directorId,sortBy);
-        List<Film> f = filmService.getDirectorFilms(directorId,sortBy);
-        return filmService.getDirectorFilms(directorId,sortBy);
+                                       @RequestParam(defaultValue = "like") String sortBy) {
+        log.info("UC Film getDirectorFilms(directorId={}, sortBy={})", directorId, sortBy);
+        List<Film> f = filmService.getDirectorFilms(directorId, sortBy);
+        return filmService.getDirectorFilms(directorId, sortBy);
     }
 
     @GetMapping("/search")
     public Collection<Film> searchFilmOrDirector(@RequestParam(defaultValue = "Empty") String query,
-                                     @RequestParam(defaultValue = "Not argument") String by) {
+                                                 @RequestParam(defaultValue = "Not argument") String by) {
         return filmService.searchFilmOrDirector(query, by);
+    }
+
+    @GetMapping(value = "/common")
+    public List<Film> getCommonFilmUserAndHisFriend(@RequestParam long userId,
+                                                    @RequestParam long friendId) {
+        log.info("Пришел запрос в контролер на  получение списока общих фильмов");
+        return filmService.getCommonFilmUserAndHisFriend(userId, friendId);
     }
 }
