@@ -97,7 +97,6 @@ public class FilmController {
     public List<Film> getDirectorFilms(@NotNull @PathVariable long directorId,
                                        @RequestParam(defaultValue = "like") String sortBy) {
         log.info("UC Film getDirectorFilms(directorId={}, sortBy={})", directorId, sortBy);
-        List<Film> f = filmService.getDirectorFilms(directorId, sortBy);
         return filmService.getDirectorFilms(directorId, sortBy);
     }
 

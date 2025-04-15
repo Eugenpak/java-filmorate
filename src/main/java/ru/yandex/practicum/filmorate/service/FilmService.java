@@ -64,7 +64,7 @@ public class FilmService {
         return getFieldsFilm(listFilm);
     }
 
-    private Collection<Film> getFieldsFilm(Collection<Film> listFilm) {
+    public Collection<Film> getFieldsFilm(Collection<Film> listFilm) {
         log.info("F-S getFieldsFilm: begin");
         List<Long> filmIdList = listFilm.stream().map(Film::getId).toList();
         Map<Long, Set<Genre>> dtoGegres = getManyGenreForFilm(filmIdList);
@@ -334,7 +334,6 @@ public class FilmService {
             }
         });
         return getFieldsFilm(popFilm);
-
     }
 
     public void deleteFilm(Long filmId) {
@@ -348,7 +347,7 @@ public class FilmService {
         if (sort == null) {
             throw new ParameterNotValidException("Получено: " + sortBy + " должно быть: likes или year");
         }
-
+        directorService.getDirectorById(directorId);
         List<Long> filmIdList = filmStorage.getFilmDirectorSort(directorId, sort);
         Collection<Film> fl = getFieldsFilm(filmStorage.getFilmsByListFilmId(filmIdList));
         Map<Long, Film> mapFilm = new HashMap<>();
@@ -378,7 +377,17 @@ public class FilmService {
                 }
             }
         }
-        return getFieldsFilm(searchFilms);
+        List<Long> idSearchFilms = new ArrayList<>(getFieldsFilm(searchFilms)).stream()
+                .map(Film::getId)
+                .toList();
+        List<Film> popularFilms = new ArrayList<>(getPopularFilms(filmStorage.findAll().size()));
+        List<Film> totalSearchFilm = new ArrayList<>();
+        popularFilms.forEach(film -> {
+                    if (idSearchFilms.contains(film.getId())) {
+                        totalSearchFilm.add(film);
+                    }
+                });
+        return totalSearchFilm;
     }
 
     public List<Film> getPopularFilmsByGenreAndYear(int count, long genreId, int year) {

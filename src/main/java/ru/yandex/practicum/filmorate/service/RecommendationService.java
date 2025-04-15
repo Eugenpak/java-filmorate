@@ -14,11 +14,13 @@ import java.util.*;
 public class RecommendationService {
     private final LikeDao likeDao;
     private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
     @Autowired
-    public RecommendationService(LikeDao likeDao, FilmStorage filmStorage) {
+    public RecommendationService(LikeDao likeDao, FilmStorage filmStorage, FilmService filmService) {
         this.likeDao = likeDao;
         this.filmStorage = filmStorage;
+        this.filmService = filmService;
     }
 
     public List<Film> getRecommendations(Long userId) {
@@ -80,6 +82,6 @@ public class RecommendationService {
             });
         }
         log.info("Рекомендации для пользователя {} собраны", userId);
-        return recommendedFilms;
+        return new ArrayList<>(filmService.getFieldsFilm(recommendedFilms));
     }
 }
