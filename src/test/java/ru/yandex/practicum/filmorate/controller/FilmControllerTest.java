@@ -4,22 +4,13 @@ import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-
 
 import java.time.LocalDate;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Set;
 
 
 @SpringBootTest
@@ -46,12 +37,12 @@ class FilmControllerTest {
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(LocalDate.of(1970,1,1)).build();
+                .name("name").birthday(LocalDate.of(1970, 1, 1)).build();
     }
 
     @BeforeEach
     public void initEach() {
-        LocalDate releaseFilm = LocalDate.of(1970,1,1); // 1970-01-01
+        LocalDate releaseFilm = LocalDate.of(1970, 1, 1); // 1970-01-01
         film = Film.builder()
                 .id(1L)
                 .name("name film")

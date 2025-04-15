@@ -1,19 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
 
 //@WebMvcTest(GenreController.class)
 class GenreControllerTest {
@@ -25,8 +15,8 @@ class GenreControllerTest {
 
     private List<Genre> getGenres() {
         // Mpa: (4,'R'), (5,'NC-17');
-        Genre one = new Genre(1L,"Комедия");
-        Genre two = new Genre(2L,"Драма");
+        Genre one = new Genre(1L, "Комедия");
+        Genre two = new Genre(2L, "Драма");
         return List.of(one, two);
     }
 
