@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,16 +101,16 @@ public class FilmController {
         return filmService.getDirectorFilms(directorId, sortBy);
     }
 
+    @GetMapping("/search")
+    public Collection<Film> searchFilmOrDirector(@RequestParam(defaultValue = "Empty") String query,
+                                                 @RequestParam(defaultValue = "Not argument") String by) {
+        return filmService.searchFilmOrDirector(query, by);
+    }
+
     @GetMapping(value = "/common")
     public List<Film> getCommonFilmUserAndHisFriend(@RequestParam long userId,
                                                     @RequestParam long friendId) {
         log.info("Пришел запрос в контролер на  получение списока общих фильмов");
         return filmService.getCommonFilmUserAndHisFriend(userId, friendId);
-    }
-
-    @GetMapping("/search")
-    public Collection<Film> searchFilmOrDirector(@RequestParam(defaultValue = "Empty") String query,
-                                     @RequestParam(defaultValue = "Not argument") String by) {
-        return filmService.searchFilmOrDirector(query, by);
     }
 }

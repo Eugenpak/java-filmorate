@@ -154,7 +154,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     @Override
-    public List<Film> getGeneralFilmUserAndHisFriend(long userId, long friendId) {
+    public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmStorage получить список общих фильмов");
         String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, g.name AS genre_name " +
                 "FROM films f " +

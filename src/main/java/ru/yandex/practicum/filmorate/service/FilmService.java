@@ -402,7 +402,7 @@ public class FilmService {
 
     public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmService получить список общих фильмов");
-        List<Film> films = filmStorage.getGeneralFilmUserAndHisFriend(userId, friendId);
+        List<Film> films = filmStorage.getCommonFilmUserAndHisFriend(userId, friendId);
         List<Film> films1 = new ArrayList<>();
         for (Film film : films) {
             films1.add(findFilmById(film.getId()));
