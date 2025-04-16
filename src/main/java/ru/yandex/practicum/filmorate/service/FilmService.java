@@ -32,6 +32,7 @@ public class FilmService {
     private final DirectorService directorService;
     private final FilmDirectorDao filmDirectorDao;
     private final FeedStorage feedStorage;
+    private final GenreIdComparator genreIdComparator;
 
     private static final LocalDate MY_CONSTANT = LocalDate.of(1895, 12, 28);
 
@@ -45,7 +46,8 @@ public class FilmService {
                        MpaService mpaService,
                        DirectorService directorService,
                        FilmDirectorDao filmDirectorDao,
-                       FeedStorage feedStorage) {
+                       FeedStorage feedStorage,
+                       GenreIdComparator genreIdComparator) {
         this.filmStorage = filmStorage;
         this.userService = userService;
         this.filmGenreDao = filmGenreDao;
@@ -56,6 +58,7 @@ public class FilmService {
         this.directorService = directorService;
         this.filmDirectorDao = filmDirectorDao;
         this.feedStorage = feedStorage;
+        this.genreIdComparator = genreIdComparator;
     }
 
     public Collection<Film> findAll() {
@@ -199,6 +202,9 @@ public class FilmService {
                 el.setName(ft.get().getName());
             }
         }
+        List<Genre> listForSortedGenre = new ArrayList<>(sg);
+        listForSortedGenre.sort(genreIdComparator);
+        sg = new HashSet<>(listForSortedGenre);
         film.setGenres(sg);
         log.info("Новый фильм сохраняется (id=" + film.getId() + ", name='" + film.getName() + "')");
         return film;
@@ -324,15 +330,17 @@ public class FilmService {
         Collection<Film> popFilm = likeDao.findPopularFilmsId(count).stream()
                 .map(p -> filmStorage.findFilmById(p.getFilmId()).get())
                 .collect(Collectors.toList());
-        List<Long> idPopularFilms = popFilm.stream()
-                .map(Film::getId)
-                .toList();
-        Collection<Film> allFilm = filmStorage.findAll();
-        allFilm.forEach(film -> {
-            if (!idPopularFilms.contains(film.getId())) {
-                popFilm.add(film);
-            }
-        });
+        if (popFilm.size() < count) {
+            List<Long> idPopularFilms = popFilm.stream()
+                    .map(Film::getId)
+                    .toList();
+            Collection<Film> allFilm = filmStorage.findAllFilmWithLimit(count - popFilm.size());
+            allFilm.forEach(film -> {
+                if (!idPopularFilms.contains(film.getId())) {
+                    popFilm.add(film);
+                }
+            });
+        }
         return getFieldsFilm(popFilm);
     }
 
