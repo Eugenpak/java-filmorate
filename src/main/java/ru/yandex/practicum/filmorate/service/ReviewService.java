@@ -78,7 +78,13 @@ public class ReviewService {
     public Review update(Review filmReview) {
         log.debug("Rev-S update({})", filmReview);
         // проверка полей Review
+        checkExistsReview(filmReview.getReviewId());
         checksReview(filmReview);
+        // Корректировка к тесту
+        Review oldReview = reviewStorage.findReviewById(filmReview.getReviewId()).get();
+        filmReview.setUserId(oldReview.getUserId());
+        filmReview.setFilmId(oldReview.getFilmId());
+
         Review review = reviewStorage.update(filmReview);
         review.setUseful(reviewUserDao.getUsefulByReviewId(review.getReviewId()));
         log.info("Обновлён отзыв с id = {}", review.getReviewId());
