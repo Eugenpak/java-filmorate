@@ -161,22 +161,12 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     @Override
     public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmStorage получить список общих фильмов");
-        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, g.name AS genre_name " +
-                "FROM films f " +
-                "JOIN likes l ON f.id = l.film_id " +
-                "JOIN film_genres fg ON f.id = fg.film_id " +
-                "JOIN genres g ON fg.genre_id = g.id " +
-                "WHERE l.user_id IN (?, ?) " +
-                "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, g.name " +
-                "HAVING COUNT(DISTINCT l.user_id) = 2 " +
-                "ORDER BY COUNT(l.user_id) DESC";
 
-        String sql2 = "SELECT f.* FROM FILMS AS f JOIN LIKES AS l ON f.id = l.film_id " +
+        String sql = "SELECT f.* FROM FILMS AS f JOIN LIKES AS l ON f.id = l.film_id " +
                 "WHERE l.user_id = ? AND l.film_id IN (SELECT film_id FROM LIKES " +
                 "WHERE user_id = ?)";
         try {
-            //List<Film> result = jdbc.query(sql, mapper, userId, friendId);
-            List<Film> result = jdbc.query(sql2, mapper, userId, friendId);
+            List<Film> result = jdbc.query(sql, mapper, userId, friendId);
             log.info("result {}", result);
             return result;
         } catch (Exception e) {
