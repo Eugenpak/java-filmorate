@@ -51,6 +51,7 @@ public class ReviewService {
             reviews = reviewStorage.findReviewsByFilmId(filmId);
         }
         addBatchRatingByListReview(reviews);
+        reviews = reviews.stream().sorted((p1, p2) -> p2.getUseful() - p1.getUseful()).collect(Collectors.toList());
         log.debug("Количество отзывов: {}", reviews.size());
         log.trace("Список отзывов: {}", reviews.stream().map(Review::toString));
         if (reviews.size() > count) {
