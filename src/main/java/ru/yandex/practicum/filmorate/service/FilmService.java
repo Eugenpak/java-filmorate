@@ -438,6 +438,8 @@ public class FilmService {
 
     public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmService получить список общих фильмов");
+        userService.findUserById(userId);
+        userService.findUserById(friendId);
         List<Film> films = filmStorage.getCommonFilmUserAndHisFriend(userId, friendId);
         return (List<Film>) getFieldsFilm(films);
     }
