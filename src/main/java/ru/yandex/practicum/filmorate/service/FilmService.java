@@ -396,6 +396,27 @@ public class FilmService {
         return totalSearchFilm;
     }
 
+    public List<Film> getPopularFilmsByGenre(int count, long genreId) {
+        log.info("FilmService getPopularFilmsByGenre: count={}, genreId={}", count, genreId);
+        Collection<Film> films = getPopularFilms(count);
+        List<Film> sortFilms = films.stream()
+                .filter(film -> film.getGenres() != null &&
+                        film.getGenres().stream().anyMatch(genre -> genre.getId() == genreId))
+                .collect(Collectors.toList());
+
+        return new ArrayList<>(getFieldsFilm(sortFilms));
+    }
+
+    public List<Film> getPopularFilmsByYear(int count, int year) {
+        log.info("FilmService getPopularFilmsByYear: count={}, year={}", count, year);
+        Collection<Film> films = getPopularFilms(count);
+        List<Film> sortFilms = films.stream()
+                .filter(film -> film.getReleaseDate() != null && film.getReleaseDate().getYear() == year)
+                .collect(Collectors.toList());
+
+        return new ArrayList<>(getFieldsFilm(sortFilms));
+    }
+
     public List<Film> getPopularFilmsByGenreAndYear(int count, long genreId, int year) {
         log.info("FilmService getPopularFilmsByGenreAndYear: count={}, genreId={}, year={}", count, genreId, year);
         List<Long> filmIds = likeDao.findPopularFilmsByGenreYear(count, genreId, year);
