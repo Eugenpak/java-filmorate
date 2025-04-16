@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserFeed {
-    private Long id;
+    private Long eventId;
     @NotBlank
     private Long userId;
     @NotBlank

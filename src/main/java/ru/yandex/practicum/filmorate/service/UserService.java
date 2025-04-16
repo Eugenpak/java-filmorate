@@ -158,6 +158,7 @@ public class UserService {
 
     public List<UserFeed> getUserFeedById(long id) {
         log.info("Started UserStorage -----> getUserFeedById");
+        findUserById(id);
         return feedStorage.getUserFeedById(id);
     }
 }

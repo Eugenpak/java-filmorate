@@ -31,4 +31,6 @@ public interface FilmStorage {
     List<Film> searchFilmByTitleAndDirector(String query);
 
     List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId);
+
+    Collection<Film> findAllFilmWithLimit(int limit);
 }

@@ -46,6 +46,11 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> findAllFilmWithLimit(int limit) {
+        return findMany("SELECT * FROM films LIMIT " + limit);
+    }
+
+    @Override
     public Film create(Film film) {
         log.info("FilmDbStorage start create()");
         long id = insert(
