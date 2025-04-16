@@ -170,8 +170,13 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                 "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, g.name " +
                 "HAVING COUNT(DISTINCT l.user_id) = 2 " +
                 "ORDER BY COUNT(l.user_id) DESC";
+
+        String sql2 = "SELECT f.* FROM FILMS AS f JOIN LIKES AS l ON f.id = l.film_id " +
+                "WHERE l.user_id = ? AND l.film_id IN (SELECT film_id FROM LIKES " +
+                "WHERE user_id = ?)";
         try {
-            List<Film> result = jdbc.query(sql, mapper, userId, friendId);
+            //List<Film> result = jdbc.query(sql, mapper, userId, friendId);
+            List<Film> result = jdbc.query(sql2, mapper, userId, friendId);
             log.info("result {}", result);
             return result;
         } catch (Exception e) {
