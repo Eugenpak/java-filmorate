@@ -297,13 +297,11 @@ public class FilmService {
         findFilmById(filmId);
         userService.findUserById(userId);
         try {
-
             likeDao.add(filmId, userId);
         } catch (Exception ex) {
             String msg = "Пользователь с userId=" + userId +
-                    " поставил лайк к фильму с filmId=" + filmId;
+                    " уже поставил лайк к фильму с filmId=" + filmId;
             log.info(msg);
-            throw new ValidationException(msg);
         }
 
         log.info("Start F-S addLike(filmId:{},userId:{})", filmId, userId);
