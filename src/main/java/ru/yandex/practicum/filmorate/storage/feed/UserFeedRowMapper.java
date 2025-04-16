@@ -13,7 +13,7 @@ public class UserFeedRowMapper implements RowMapper<UserFeed> {
     public UserFeed mapRow(ResultSet rs, int rowNum) throws SQLException {
         UserFeed fromMapRow = new UserFeed()
                 .toBuilder()
-                .id(rs.getLong("id"))
+                .eventId(rs.getLong("id"))
                 .userId(rs.getLong("user_id"))
                 .eventType(rs.getString("event_type"))
                 .operation(rs.getString("operation"))
