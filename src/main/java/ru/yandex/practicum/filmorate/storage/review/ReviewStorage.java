@@ -16,4 +16,6 @@ public interface ReviewStorage {
     Optional<Review> findReviewById(long id);
 
     boolean delByReviewId(long id);
+
+    void deleteAll();
 }

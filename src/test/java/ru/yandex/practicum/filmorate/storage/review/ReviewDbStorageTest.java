@@ -49,10 +49,7 @@ public class ReviewDbStorageTest {
 
     @Test
     void findAll() {
-        reviewDbStorage.delByReviewId(1);
-        reviewDbStorage.delByReviewId(2);
-        reviewDbStorage.delByReviewId(3);
-        reviewDbStorage.delByReviewId(4);
+        reviewDbStorage.deleteAll();
         film1.setDirectors(List.of());
         filmService.create(film1);
         userService.create(user1);
@@ -147,7 +144,5 @@ public class ReviewDbStorageTest {
        Assertions.assertEquals(List.of(createReview1, createReview2),
                reviewDbStorage.findReviewsByFilmId(film1.getId()));
    }
-
-
 
 }

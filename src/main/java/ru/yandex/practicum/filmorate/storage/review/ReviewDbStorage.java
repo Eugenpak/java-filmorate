@@ -85,4 +85,9 @@ public class ReviewDbStorage extends BaseDbStorage<Review> implements ReviewStor
         log.info("ReviewDbStorage start delByFilmId({})",id);
         return delete(DELETE_QUERY, id);
     }
+
+    @Override
+    public void deleteAll() {
+        jdbc.update("DELETE FROM reviews");
+    }
 }
