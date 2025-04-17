@@ -45,8 +45,8 @@ public class DirectorDbStorageTest {
         filmDbStorage.deleteAll();
         assertEquals(0, filmDbStorage.findAll().size());
         List<Film> allFilm = getTestFilm();
-        Film firstFilm = allFilm.getFirst();
-        Film secondFilm = allFilm.getLast();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
 
         Director director1 = new Director();
         director1.setName("TestDirector1");
@@ -65,7 +65,7 @@ public class DirectorDbStorageTest {
         filmService.create(firstFilm);
         filmService.create(secondFilm);
         List<Film> searchFilms = filmDbStorage.searchFilmByDirector("TestDirector1");
-        Assertions.assertEquals(firstFilm.getId(), searchFilms.getFirst().getId());
+        Assertions.assertEquals(firstFilm.getId(), searchFilms.get(0).getId());
     }
 
     @Test
@@ -73,8 +73,8 @@ public class DirectorDbStorageTest {
         filmDbStorage.deleteAll();
         assertEquals(0, filmDbStorage.findAll().size());
         List<Film> allFilm = getTestFilm();
-        Film firstFilm = allFilm.getFirst();
-        Film secondFilm = allFilm.getLast();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
 
         Director director1 = new Director();
         director1.setName("режиссер фильма А");
@@ -93,7 +93,7 @@ public class DirectorDbStorageTest {
         filmService.create(firstFilm);
         filmService.create(secondFilm);
         List<Film> searchFilms = filmDbStorage.searchFilmByTitleAndDirector("фильма А");
-        Assertions.assertEquals(firstFilm.getId(), searchFilms.getFirst().getId());
+        Assertions.assertEquals(firstFilm.getId(), searchFilms.get(0).getId());
     }
 
 }

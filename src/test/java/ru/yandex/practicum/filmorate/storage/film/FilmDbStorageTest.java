@@ -97,12 +97,12 @@ class FilmDbStorageTest {
         filmDbStorage.deleteAll();
         assertEquals(0, filmDbStorage.findAll().size());
         List<Film> allFilm = getTestFilm();
-        Film firstFilm = allFilm.getFirst();
-        Film secondFilm = allFilm.getLast();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
         filmDbStorage.create(firstFilm);
         filmDbStorage.create(secondFilm);
         List<Film> searchFilms = filmDbStorage.searchFilmByTitle("фильма В");
-        Assertions.assertEquals(secondFilm.getId(), searchFilms.getFirst().getId());
+        Assertions.assertEquals(secondFilm.getId(), searchFilms.get(0).getId());
     }
 
     @Test
@@ -110,49 +110,11 @@ class FilmDbStorageTest {
         filmDbStorage.deleteAll();
         assertEquals(0, filmDbStorage.findAll().size());
         List<Film> allFilm = getTestFilm();
-        Film firstFilm = allFilm.getFirst();
-        Film secondFilm = allFilm.getLast();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
         filmDbStorage.create(firstFilm);
         filmDbStorage.create(secondFilm);
         filmDbStorage.delByFilmId(firstFilm.getId());
-        Assertions.assertEquals(secondFilm.getId(), new ArrayList<>(filmDbStorage.findAll()).getFirst().getId());
+        Assertions.assertEquals(secondFilm.getId(), new ArrayList<>(filmDbStorage.findAll()).get(0).getId());
     }
-
-    /*
-    @Test
-    void addLike() {
-        likeDao.deleteAllPopularFilms();
-        userStorage.delAllUsers();
-        filmDbStorage.deleteAll();
-        Film film1 = filmDbStorage.create(getTestFilm().get(0));
-        Film film2 = filmDbStorage.create(getTestFilm().get(1));
-        User user1 = userStorage.create(getTestUser().get(0));
-        User user2 = userStorage.create(getTestUser().get(0));
-        filmDbStorage.addLike(film1.getId(),user1.getId());
-        filmDbStorage.addLike(film2.getId(),user1.getId());
-        filmDbStorage.addLike(film2.getId(),user2.getId());
-
-        List<Film> listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(2, listPop.size());
-        assertEquals(film2.getId(), listPop.get(0).getId());
-    }
-
-    @Test
-    void deleteLike() {
-        likeDao.deleteAllPopularFilms();
-        userStorage.delAllUsers();
-        filmDbStorage.deleteAll();
-        Film film1 = filmDbStorage.create(getTestFilm().get(0));
-        User user1 = userStorage.create(getTestUser().get(0));
-
-        filmDbStorage.addLike(film1.getId(),user1.getId());
-        List<Film> listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(1, listPop.size());
-        assertEquals(film1.getId(), listPop.get(0).getId());
-        filmDbStorage.deleteLike(film1.getId(),user1.getId());
-        listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(0, listPop.size());
-    }
-    */
-
 }
