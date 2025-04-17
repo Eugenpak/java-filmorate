@@ -1,12 +1,26 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.junit.jupiter.api.Test;
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.filmgenre.FilmGenreDao;
+import ru.yandex.practicum.filmorate.storage.filmmpa.FilmMpaDao;
+import ru.yandex.practicum.filmorate.storage.like.LikeDao;
 
-//@ExtendWith(MockitoExtension.class)
+import java.time.LocalDate;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class FilmServiceTest {
-    /*@Mock
+    @Mock
     private FilmStorage filmStorage;
 
     @Mock
@@ -35,11 +49,11 @@ class FilmServiceTest {
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
                 .name("name").birthday(LocalDate.of(1970,1,1)).build();
-    }*/
+    }
 
 
     @Test
-    void findAll() {/*
+    void findAll() {
         List<Film> expectedFilms = List.of(getTestFilm());
         when(filmStorage.findAll()).thenReturn(expectedFilms);
 
@@ -47,7 +61,6 @@ class FilmServiceTest {
         verify(filmStorage, times(1)).findAll();
         assertEquals(expectedFilms.size(), actualFilms.size());
         assertSame(expectedFilms.get(0), actualFilms.get(0));
-        */
     }
 
     @Test
