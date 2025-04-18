@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.filmmpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,8 +20,8 @@ public class FilmMpaDaoImpl extends BaseDbStorage<FilmMpa> implements FilmMpaDao
             " AND mpa_id = ?";
     private static final String DELETE_BY_FILM_QUERY = "DELETE FROM film_mpas WHERE film_id = ?";
 
-    public FilmMpaDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<FilmMpa> mapper) {
-        super(jdbcTemplate, mapper, FilmMpa.class);
+    public FilmMpaDaoImpl(NamedParameterJdbcTemplate npJdbc,RowMapper<FilmMpa> mapper) {
+        super(npJdbc, mapper, FilmMpa.class);
     }
 
     @Override

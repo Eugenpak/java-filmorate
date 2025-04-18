@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -57,8 +56,8 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String FIND_MANY_BY_TITLE_QUERY = "SELECT * FROM films " +
             "WHERE name ILIKE concat('%', ?, '%')";
 
-    public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
-        super(jdbc, mapper, Film.class);
+    public FilmDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Film> mapper) {
+         super(npJdbc, mapper, Film.class);
     }
 
     @Override
@@ -125,10 +124,9 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public List<Film> getFilmsByListFilmId(List<Long> filmId) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", filmId);
-        List<Film> result = template.query(FIND_MANY_BY_FILMID_LIST_QUERY, parameters, new BeanPropertyRowMapper<>(Film.class));
+        List<Film> result = findMany(FIND_MANY_BY_FILMID_LIST_QUERY, parameters);
         log.info("FilmDbStorage >------> {})", result);
         return result;
         //--------------------- awa ----------------- awa -------------------------------
@@ -137,7 +135,6 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     @Override
     public List<Long> getFilmDirectorSort(long directorId, SortBy sort) {
         log.info("FilmDbStorage start findFilmById(directorId:{}, sortBy: {})", directorId, sort);
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
         //FIND_MANY_FILMID_BY_YEAR_QUERY - Вывод всех фильмов режиссёра, отсортированных по годам.
         //FIND_MANY_FILMID_BY_POP_QUERY -  Вывод всех фильмов режиссёра, отсортированных по количеству лайков.
         String sql;
@@ -147,7 +144,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
             sql = FIND_MANY_FILMID_BY_POP_QUERY;
         }
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", directorId);
-        List<FilmDirector> result = template.query(sql, parameters, new BeanPropertyRowMapper<>(FilmDirector.class));
+        List<FilmDirector> result = npJdbc.query(sql, parameters, new BeanPropertyRowMapper<>(FilmDirector.class));
         return result.stream().map(FilmDirector::getFilmId).toList();
     }
 

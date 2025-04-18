@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.feed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
@@ -13,8 +14,8 @@ import java.util.List;
 @Slf4j
 public class FeedDbStorage extends BaseDbStorage<UserFeed> implements FeedStorage {
 
-    public FeedDbStorage(JdbcTemplate jdbc, RowMapper<UserFeed> mapper) {
-        super(jdbc, mapper, UserFeed.class);
+    public FeedDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<UserFeed> mapper) {
+        super(npJdbc, mapper, UserFeed.class);
     }
 
     @Override

@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.mpa;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,8 +20,8 @@ public class MpaDbStorage extends BaseDbStorage<Mpa> implements MpaStorage {
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM mpas WHERE id IN " +
             "(SELECT mpa_id FROM film_mpas WHERE film_id = ?)";
 
-    public MpaDbStorage(JdbcTemplate jdbc,@Qualifier("MpaRowMapper") RowMapper<Mpa> mapper) {
-        super(jdbc, mapper, Mpa.class);
+    public MpaDbStorage(NamedParameterJdbcTemplate npJdbc, @Qualifier("MpaRowMapper") RowMapper<Mpa> mapper) {
+        super(npJdbc, mapper, Mpa.class);
     }
 
     @Override

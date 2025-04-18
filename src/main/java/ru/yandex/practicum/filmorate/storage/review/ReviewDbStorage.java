@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.storage.review;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
@@ -24,8 +24,8 @@ public class ReviewDbStorage extends BaseDbStorage<Review> implements ReviewStor
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM reviews WHERE film_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM reviews WHERE id = ?";
 
-    public ReviewDbStorage(JdbcTemplate jdbc, RowMapper<Review> mapper) {
-        super(jdbc, mapper, Review.class);
+    public ReviewDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Review> mapper) {
+        super(npJdbc, mapper, Review.class);
     }
 
     @Override

@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.reviewuser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,8 +23,8 @@ public class ReviewUserDaoImpl extends BaseDbStorage<ReviewUser> implements Revi
     private static final String FIND_ENTITY_BY_REVIEWID_USERID_QUERY = "SELECT * FROM review_users " +
             "WHERE review_id = ? AND user_id = ?";
 
-    public ReviewUserDaoImpl(JdbcTemplate jdbcTemplate, RowMapper<ReviewUser> mapper) {
-        super(jdbcTemplate, mapper, ReviewUser.class);
+    public ReviewUserDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<ReviewUser> mapper) {
+        super(npJdbc, mapper, ReviewUser.class);
     }
 
     @Override

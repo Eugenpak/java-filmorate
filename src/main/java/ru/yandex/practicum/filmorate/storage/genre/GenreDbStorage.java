@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.genre;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -22,8 +21,8 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
             "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
 
 
-    public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
-        super(jdbc, mapper, Genre.class);
+    public GenreDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Genre> mapper) {
+        super(npJdbc, mapper, Genre.class);
     }
 
     @Override
