@@ -5,15 +5,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.PopularFilm;
+import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
-public class LikeDaoImpl implements LikeDao {
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<PopularFilm> mapperPop;
+public class LikeDaoImpl extends BaseDbStorage<PopularFilm> implements LikeDao {
     private static final String INSERT_QUERY = "INSERT INTO likes (film_id,user_id) " +
             "VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM likes WHERE film_id = ?" +
@@ -47,42 +46,41 @@ public class LikeDaoImpl implements LikeDao {
                     "GROUP BY l2.user_id";
 
     public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.mapperPop = mapperPop;
+        super(jdbcTemplate, mapperPop, PopularFilm.class);
     }
 
     @Override
     public void add(long filmId, long userId) {
         log.debug("LikeDaoImpl add({}, {}).", filmId, userId);
-        int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, userId);
 
+        update(INSERT_QUERY, filmId, userId);
         log.trace("Фильму ID_{} добавлен лайк от пользователя ID_{}.", filmId, userId);
     }
 
     @Override
     public void delete(long filmId, long userId) {
         log.debug("LikeDaoImpl delete({}, {}).", filmId, userId);
-        jdbcTemplate.update(DELETE_QUERY, filmId, userId);
+        jdbc.update(DELETE_QUERY, filmId, userId);
         log.trace("У фильма ID_{} удалён лайк от пользователя ID_{}.", filmId, userId);
     }
 
     @Override
     public Collection<PopularFilm> findPopularFilmsId(int count) {
         log.debug("LikeDaoImpl findPopularFilmsId().");
-        return jdbcTemplate.query(FIND_POPULAR_FILM_QUERY, mapperPop, count);
+        return findMany(FIND_POPULAR_FILM_QUERY, count);
     }
 
     @Override
     public void deleteAllPopularFilms() {
         log.debug("LikeDaoImpl deleteAllPopularFilms().");
-        jdbcTemplate.update(DELETE_ALL_QUERY);
+        jdbc.update(DELETE_ALL_QUERY);
         log.trace("Список популярных фильмов удалён.");
     }
 
     @Override
     public Set<Long> getLikedFilmsIdsByUser(long userId) {
         log.debug("LikeDaoImpl getLikedFilmIdsByUser для пользователя с id: {}.", userId);
-        Set<Long> filmIds = new HashSet<>(jdbcTemplate.queryForList(GET_FILMS_BY_USER_QUERY, Long.class, userId));
+        Set<Long> filmIds = new HashSet<>(jdbc.queryForList(GET_FILMS_BY_USER_QUERY, Long.class, userId));
         log.trace("Получен список id фильмов, которые лайкнул пользователь {}: {}.", userId, filmIds);
         return filmIds;
     }
@@ -90,7 +88,7 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public Set<Long> getUserIdsByLikedFilm(long filmId) {
         log.debug("LikeDaoImpl getUserIdsByLikedFilm для фильма с id: {}.", filmId);
-        Set<Long> userIds = new HashSet<>(jdbcTemplate.queryForList(GET_USERS_BY_FILM_QUERY, Long.class, filmId));
+        Set<Long> userIds = new HashSet<>(jdbc.queryForList(GET_USERS_BY_FILM_QUERY, Long.class, filmId));
         log.trace("Получен список id пользователей, поставивших лайк фильму {}: {}.", filmId, userIds);
         return userIds;
     }
@@ -98,10 +96,7 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public List<Long> findPopularFilmsByGenreYear(int count, long genreId, int year) {
         log.debug("LikeDaoImpl findPopularFilmsByGenreYear: count={}, genreId={}, year={}", count, genreId, year);
-        List<PopularFilm> popularFilms = jdbcTemplate.query(
-                FIND_POPULAR_FILMS_BY_GENRE_YEAR_QUERY,
-                mapperPop,
-                genreId, year, count);
+        List<PopularFilm> popularFilms = findMany(FIND_POPULAR_FILMS_BY_GENRE_YEAR_QUERY,genreId, year, count);
         return popularFilms.stream()
                 .map(PopularFilm::getFilmId)
                 .collect(Collectors.toList());
@@ -110,7 +105,7 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public Map<Long, Integer> getCommonLikesCount(long userId) {
         log.debug("LikeDaoImpl getCommonLikesCount для пользователя {}", userId);
-        return jdbcTemplate.query(GET_COMMON_LIKES_SQL,
+        return jdbc.query(GET_COMMON_LIKES_SQL,
                 rs -> {
                     Map<Long, Integer> result = new HashMap<>();
                     while (rs.next()) {
