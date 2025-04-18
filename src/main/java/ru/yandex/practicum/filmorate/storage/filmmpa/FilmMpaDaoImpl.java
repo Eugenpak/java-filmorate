@@ -21,8 +21,8 @@ public class FilmMpaDaoImpl extends BaseDbStorage<FilmMpa> implements FilmMpaDao
             " AND mpa_id = ?";
     private static final String DELETE_BY_FILM_QUERY = "DELETE FROM film_mpas WHERE film_id = ?";
 
-    public FilmMpaDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<FilmMpa> mapper) {
-        super(jdbcTemplate, mapper, FilmMpa.class);
+    public FilmMpaDaoImpl(NamedParameterJdbcTemplate npJdbc,RowMapper<FilmMpa> mapper) {
+        super(npJdbc, mapper, FilmMpa.class);
     }
 
     @Override

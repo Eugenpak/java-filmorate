@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.friend;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
@@ -24,8 +25,8 @@ public class FriendDbStorage extends BaseDbStorage<User>  implements FriendStora
     private static final String DELETE_QUERY = "DELETE FROM friends WHERE user_id = ? " +
             "AND friend_id = ?";
 
-    public FriendDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
-        super(jdbc, mapper, User.class);
+    public FriendDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<User> mapper) {
+        super(npJdbc, mapper, User.class);
     }
 
     @Override

@@ -22,8 +22,8 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
             "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
 
 
-    public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
-        super(jdbc, mapper, Genre.class);
+    public GenreDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Genre> mapper) {
+        super(npJdbc, mapper, Genre.class);
     }
 
     @Override

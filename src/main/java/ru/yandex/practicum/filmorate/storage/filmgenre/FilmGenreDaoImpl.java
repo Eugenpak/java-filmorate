@@ -23,8 +23,8 @@ public class FilmGenreDaoImpl  extends BaseDbStorage<FilmGenre> implements FilmG
 
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM film_genres WHERE film_id IN (?)";
 
-    public FilmGenreDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<FilmGenre> mapper) {
-        super(jdbcTemplate, mapper, FilmGenre.class);
+    public FilmGenreDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<FilmGenre> mapper) {
+        super(npJdbc, mapper, FilmGenre.class);
     }
 
     @Override

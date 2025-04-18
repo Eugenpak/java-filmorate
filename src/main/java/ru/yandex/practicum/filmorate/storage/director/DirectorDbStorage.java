@@ -23,8 +23,8 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM directors WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM directors WHERE id = ?";
 
-    public DirectorDbStorage(JdbcTemplate jdbc, RowMapper<Director> mapper) {
-        super(jdbc, mapper, Director.class);
+    public DirectorDbStorage(NamedParameterJdbcTemplate npJdbc, DirectorRowMapper mapper) {
+        super(npJdbc, mapper, Director.class);
     }
 
     @Override
@@ -76,14 +76,14 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
         List<Long> values = dIdL.stream().toList();
 
         //--------------------- awa ----------------- awa -------------------------------
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
         String sql = "SELECT * FROM DIRECTORS WHERE ID IN (:values)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<Director> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(Director.class));
-        log.info("DirectorDbStorage >------> {})",result);
-        //--------------------- awa ----------------- awa -------------------------------
-        List<Long> findDirectors = result.stream().map(Director::getId).toList();
+        List<Long> findDirectors = findMany(sql, parameters)
+                .stream()
+                .map(Director::getId)
+                .toList();
+
         return findNotValidLong(values,findDirectors);
     }
 

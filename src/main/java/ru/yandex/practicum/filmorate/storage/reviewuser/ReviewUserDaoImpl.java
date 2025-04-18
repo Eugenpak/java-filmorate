@@ -24,8 +24,8 @@ public class ReviewUserDaoImpl extends BaseDbStorage<ReviewUser> implements Revi
     private static final String FIND_ENTITY_BY_REVIEWID_USERID_QUERY = "SELECT * FROM review_users " +
             "WHERE review_id = ? AND user_id = ?";
 
-    public ReviewUserDaoImpl(JdbcTemplate jdbcTemplate, RowMapper<ReviewUser> mapper) {
-        super(jdbcTemplate, mapper, ReviewUser.class);
+    public ReviewUserDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<ReviewUser> mapper) {
+        super(npJdbc, mapper, ReviewUser.class);
     }
 
     @Override

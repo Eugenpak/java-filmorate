@@ -57,8 +57,8 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String FIND_MANY_BY_TITLE_QUERY = "SELECT * FROM films " +
             "WHERE name ILIKE concat('%', ?, '%')";
 
-    public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
-        super(jdbc, mapper, Film.class);
+    public FilmDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Film> mapper) {
+         super(npJdbc, mapper, Film.class);
     }
 
     @Override
