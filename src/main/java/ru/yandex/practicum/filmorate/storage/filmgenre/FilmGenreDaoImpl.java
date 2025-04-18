@@ -27,11 +27,9 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
 
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM film_genres WHERE film_id IN (?)";
 
-    public FilmGenreDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<Genre> mapper,
-                            GenreStorage genreStorage) {
+    public FilmGenreDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<Genre> mapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapper = mapper;
-
     }
 
     @Override
