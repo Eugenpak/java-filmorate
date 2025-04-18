@@ -379,12 +379,10 @@ public class FilmService {
             String[] allArgs = by.split(",");
             if (allArgs.length == 2) {
                 searchFilms = filmStorage.searchFilmByTitleAndDirector(query);
+            } else if (allArgs[0].equals("director")) {
+                searchFilms = filmStorage.searchFilmByDirector(query);
             } else {
-                if (allArgs[0].equals("director")) {
-                    searchFilms = filmStorage.searchFilmByDirector(query);
-                } else {
-                    searchFilms = filmStorage.searchFilmByTitle(query);
-                }
+                searchFilms = filmStorage.searchFilmByTitle(query);
             }
         }
         List<Long> idSearchFilms = new ArrayList<>(getFieldsFilm(searchFilms)).stream()
@@ -397,7 +395,11 @@ public class FilmService {
                         totalSearchFilm.add(film);
                     }
                 });
-        return totalSearchFilm;
+
+        List<Film> sortFilms = totalSearchFilm.stream()
+                .sorted(Comparator.comparing(Film::getReleaseDate).reversed())
+                .collect(Collectors.toList());
+        return new ArrayList<>(getFieldsFilm(sortFilms));
     }
 
     public List<Film> getPopularFilmsByGenre(int count, long genreId) {

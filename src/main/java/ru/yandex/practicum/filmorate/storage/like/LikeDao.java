@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.like;
 import ru.yandex.practicum.filmorate.model.PopularFilm;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface LikeDao {
@@ -19,4 +20,6 @@ public interface LikeDao {
     Set<Long> getUserIdsByLikedFilm(long filmId);
 
     List<Long> findPopularFilmsByGenreYear(int count, long genreId, int year);
+
+    Map<Long, Integer> getCommonLikesCount(long userId);
 }

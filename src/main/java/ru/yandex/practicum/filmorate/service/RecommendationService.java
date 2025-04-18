@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeDao;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,17 +37,8 @@ public class RecommendationService {
         }
 
         // считаем количество общих лайков между пользователем и другими
-        Map<Long, Integer> commonLikesCount = new HashMap<>();
-        for (Long filmId : likedFilms) {
-            Set<Long> usersWhoLikedFilm = likeDao.getUserIdsByLikedFilm(filmId);
-            log.debug("Фильм {} лайкнули пользователи: {}", filmId, usersWhoLikedFilm);
-
-            for (Long otherUser : usersWhoLikedFilm) {
-                if (!otherUser.equals(userId)) {
-                    commonLikesCount.put(otherUser, commonLikesCount.getOrDefault(otherUser, 0) + 1);
-                }
-            }
-        }
+        Map<Long, Integer> commonLikesCount = likeDao.getCommonLikesCount(userId);
+        log.debug("Количество общих лайков с другими пользователями: {}", commonLikesCount);
 
         if (commonLikesCount.isEmpty()) {
             log.debug("Не найдено похожих пользователей {}", userId);
@@ -56,31 +48,24 @@ public class RecommendationService {
 
         // находим максимальное пересечение лайков
         int maxCommonLikes = Collections.max(commonLikesCount.values());
-        Set<Long> similarUsers = new HashSet<>();
-        for (Map.Entry<Long, Integer> entry : commonLikesCount.entrySet()) {
-            if (entry.getValue() == maxCommonLikes) {
-                similarUsers.add(entry.getKey());
-            }
-        }
+        Set<Long> similarUsers = commonLikesCount.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxCommonLikes)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
         log.debug("Пользователи с максимально общими лайками: {}", similarUsers);
 
         // находим фильмы, которые оценили похожие пользователи, но не оценил сам пользователь
-        Set<Long> recommendedFilmIds = new HashSet<>();
-        for (Long similarUserId : similarUsers) {
-            Set<Long> similarUserLikes = likeDao.getLikedFilmsIdsByUser(similarUserId);
-            // исключаем фильмы, которые уже оценены самим пользователем
-            similarUserLikes.removeAll(likedFilms);
-            recommendedFilmIds.addAll(similarUserLikes);
-        }
+        Set<Long> recommendedFilmIds = similarUsers.stream()
+                .flatMap(similarUserId -> likeDao.getLikedFilmsIdsByUser(similarUserId).stream())
+                .filter(filmId -> !likedFilms.contains(filmId))
+                .collect(Collectors.toSet());
         log.debug("Рекомендуемые ID фильмов для пользователя {}: {}", userId, recommendedFilmIds);
 
-        List<Film> recommendedFilms = new ArrayList<>();
-        for (Long filmId : recommendedFilmIds) {
-            filmStorage.findFilmById(filmId).ifPresent(film -> {
-                log.debug("Добавлен фильм в рекомендации: {}", film);
-                recommendedFilms.add(film);
-            });
-        }
+        List<Film> recommendedFilms = recommendedFilmIds.stream()
+                .map(filmStorage::findFilmById)
+                .flatMap(Optional::stream)
+                .peek(film -> log.debug("Добавлен фильм в рекомендации: {}", film))
+                .collect(Collectors.toList());
         log.info("Рекомендации для пользователя {} собраны", userId);
         return new ArrayList<>(filmService.getFieldsFilm(recommendedFilms));
     }

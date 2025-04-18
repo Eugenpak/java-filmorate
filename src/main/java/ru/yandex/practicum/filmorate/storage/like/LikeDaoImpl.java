@@ -6,10 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.PopularFilm;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -41,6 +38,13 @@ public class LikeDaoImpl implements LikeDao {
                     "GROUP BY f.id " +
                     "ORDER BY like_count DESC " +
                     "LIMIT ?";
+
+    private static final String GET_COMMON_LIKES_SQL =
+            "SELECT l2.user_id AS other_user, COUNT(*) AS common_count " +
+                    "FROM likes l1 " +
+                    "JOIN likes l2 ON l1.film_id = l2.film_id " +
+                    "WHERE l1.user_id = ? AND l2.user_id <> ? " +
+                    "GROUP BY l2.user_id";
 
     public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
         this.jdbcTemplate = jdbcTemplate;
@@ -101,5 +105,22 @@ public class LikeDaoImpl implements LikeDao {
         return popularFilms.stream()
                 .map(PopularFilm::getFilmId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Long, Integer> getCommonLikesCount(long userId) {
+        log.debug("LikeDaoImpl getCommonLikesCount для пользователя {}", userId);
+        return jdbcTemplate.query(GET_COMMON_LIKES_SQL,
+                rs -> {
+                    Map<Long, Integer> result = new HashMap<>();
+                    while (rs.next()) {
+                        long otherUser = rs.getLong("other_user");
+                        int commonCount = rs.getInt("common_count");
+                        result.put(otherUser, commonCount);
+                    }
+                    return result;
+                },
+                userId, userId
+        );
     }
 }
