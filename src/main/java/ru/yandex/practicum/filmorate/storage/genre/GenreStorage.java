@@ -12,4 +12,6 @@ public interface GenreStorage {
     void findNotValid(Set<Genre> genres);
 
     Map<Long,Genre> getGenreById(List<Long> genreId);
+
+    Set<Genre> findGenresByFilmId(long filmId);
 }

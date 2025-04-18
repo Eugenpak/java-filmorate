@@ -246,7 +246,8 @@ public class FilmService {
         Film filmB = filmStorage.update(oldFilm);
         //------------------------------------------------
         genreService.findNotValid(genres); // bug-7 (r2049402162)
-        filmB.setGenres(filmGenreDao.updateFilmGenres(filmB.getId(), genres));
+        filmGenreDao.updateFilmGenres(filmB.getId(), genres);
+        filmB.setGenres(genreService.findGenresByFilmId(filmB.getId())); // bug-6 (r2049395309)
         mpaOpt.ifPresent(mpa -> filmB.setMpa(filmMpaDao.updateFilmMpa(filmB.getId(), mpa.getId())));
         filmB.setDirectors(updateFilmDirectors(filmB.getId(), filmB.getDirectors()));
         return filmB;
@@ -260,7 +261,7 @@ public class FilmService {
         //---------------------------------------------
         Film findFilm = findFilmOpt.get();
         Optional<Mpa> mpaId = filmMpaDao.get(findFilm.getId());
-        Set<Genre> genres = filmGenreDao.findGenresById(findFilm.getId());
+        Set<Genre> genres = genreService.findGenresByFilmId(findFilm.getId());
         Collection<Director> directors = findDirectorsByFilmId(findFilm.getId());
 
         if (mpaId.isPresent()) {

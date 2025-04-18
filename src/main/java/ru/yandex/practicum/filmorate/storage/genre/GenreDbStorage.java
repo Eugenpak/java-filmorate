@@ -18,6 +18,8 @@ import java.util.*;
 public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM genres WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM genres";
+    private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM genres WHERE id IN " +
+            "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
 
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
@@ -61,5 +63,12 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
         result.forEach(g -> genreMap.put(g.getId(),g));
         return genreMap;
         //--------------------- awa ----------------- awa -------------------------------
+    }
+
+    @Override
+    public Set<Genre> findGenresByFilmId(long filmId) {
+        log.debug("GenreDbStorage findGenresByFilmId({}).", filmId);
+        List<Genre> list = jdbc.query(FIND_BY_FILM_ID_QUERY,mapper, filmId);
+        return new HashSet<>(list);
     }
 }

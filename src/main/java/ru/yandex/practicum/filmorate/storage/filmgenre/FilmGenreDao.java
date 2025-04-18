@@ -13,9 +13,7 @@ public interface FilmGenreDao {
 
     void addSet(long filmId, Set<Genre> genres);
 
-    Set<Genre> findGenresById(long filmId);
-
-    Set<Genre> updateFilmGenres(long filmId, Set<Genre> genres);
+    void updateFilmGenres(long filmId, Set<Genre> genres);
 
     List<FilmGenre> getFilmGenreByFilmId(List<Long> values);
 }
