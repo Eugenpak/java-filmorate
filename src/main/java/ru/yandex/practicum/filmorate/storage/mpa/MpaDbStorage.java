@@ -18,6 +18,8 @@ import java.util.*;
 public class MpaDbStorage extends BaseDbStorage<Mpa> implements MpaStorage {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM mpas WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM mpas";
+    private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM mpas WHERE id IN " +
+            "(SELECT mpa_id FROM film_mpas WHERE film_id = ?)";
 
     public MpaDbStorage(JdbcTemplate jdbc,@Qualifier("MpaRowMapper") RowMapper<Mpa> mapper) {
         super(jdbc, mapper, Mpa.class);
@@ -47,6 +49,14 @@ public class MpaDbStorage extends BaseDbStorage<Mpa> implements MpaStorage {
         result.forEach(g -> mpaMap.put(g.getId(),g));
         return mpaMap;
         //--------------------- awa ----------------- awa -------------------------------
+    }
+
+    @Override
+    public List<Mpa> getMpasByFilmId(long filmId) {
+        log.debug("MpaDbStorage getMpasByFilmId({}).", filmId);
+        List<Mpa> mpaList = jdbc.query(FIND_BY_FILM_ID_QUERY, mapper,filmId);
+        log.trace("У фильма ID_{} получен рейтинг.", filmId);
+        return mpaList;
     }
 }
 

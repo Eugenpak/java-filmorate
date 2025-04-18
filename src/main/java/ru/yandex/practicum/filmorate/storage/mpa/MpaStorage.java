@@ -12,4 +12,6 @@ public interface MpaStorage {
     Collection<Mpa> findAll();
 
     Map<Long,Mpa> getMpaById(List<Long> mpaId);
+
+    List<Mpa> getMpasByFilmId(long filmId);
 }

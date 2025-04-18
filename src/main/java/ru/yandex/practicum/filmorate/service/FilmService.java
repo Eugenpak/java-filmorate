@@ -248,7 +248,13 @@ public class FilmService {
         genreService.findNotValid(genres); // bug-7 (r2049402162)
         filmGenreDao.updateFilmGenres(filmB.getId(), genres);
         filmB.setGenres(genreService.findGenresByFilmId(filmB.getId())); // bug-6 (r2049395309)
-        mpaOpt.ifPresent(mpa -> filmB.setMpa(filmMpaDao.updateFilmMpa(filmB.getId(), mpa.getId())));
+        if (mpaOpt.isPresent()) {
+            //mpaOpt.ifPresent(mpa -> filmB.setMpa(filmMpaDao.updateFilmMpa(filmB.getId(), mpa.getId())));
+            Mpa mpaNewFilm = mpaOpt.get();
+            // проверка существующих записей в таблице film_mpas.
+            mpaService.findMpaById(mpaNewFilm.getId());
+            filmMpaDao.updateFilmMpa(filmB.getId(),mpaNewFilm.getId());
+        }
         filmB.setDirectors(updateFilmDirectors(filmB.getId(), filmB.getDirectors()));
         return filmB;
     }
@@ -260,13 +266,13 @@ public class FilmService {
         }
         //---------------------------------------------
         Film findFilm = findFilmOpt.get();
-        Optional<Mpa> mpaId = filmMpaDao.get(findFilm.getId());
+        Optional<Mpa> mpaOpt = mpaService.getValidMpaByFilmId(findFilm.getId());
         Set<Genre> genres = genreService.findGenresByFilmId(findFilm.getId());
         Collection<Director> directors = findDirectorsByFilmId(findFilm.getId());
 
-        if (mpaId.isPresent()) {
-            log.info("F-S findFilmById({}}), добавлен mpa", id);
-            findFilm.setMpa(mpaId.get());
+        if (mpaOpt.isPresent()) {
+            log.info("F-S findFilmById({}}), добавлено поле mpa", id);
+            findFilm.setMpa(mpaOpt.get());
         }
 
         findFilm.setGenres(genres);
