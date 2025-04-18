@@ -32,6 +32,31 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     private static final String DELETE_ALL_QUERY = "DELETE FROM films";
 
+    private static final String FIND_MANY_BY_FILMID_LIST_QUERY = "SELECT * FROM FILMS WHERE ID IN (:values)";
+    private static final String FIND_MANY_FILMID_BY_YEAR_QUERY = "SELECT f.id AS film_id,fd.DIRECTOR_ID AS director_id, EXTRACT(YEAR FROM f.RELEASE_DATE) AS God " +
+            "FROM FILMS f LEFT JOIN FILM_DIRECTORS fd ON f.id = fd.FILM_ID " +
+            "WHERE fd.DIRECTOR_ID = :values " +
+            "GROUP BY f.ID,fd.DIRECTOR_ID ORDER BY god";
+    private static final String FIND_MANY_FILMID_BY_POP_QUERY = "SELECT f.id AS film_id,fd.DIRECTOR_ID AS director_id,Count(l.user_id) AS Pop " +
+            "FROM FILMS f LEFT JOIN LIKES l ON l.FILM_ID = f.ID " +
+            "LEFT JOIN FILM_DIRECTORS fd ON f.id = fd.FILM_ID " +
+            "WHERE fd.DIRECTOR_ID = :values " +
+            "GROUP BY f.ID,fd.DIRECTOR_ID " +
+            "ORDER BY pop DESC";
+    private static final String FIND_MANY_BY_USERID_FRIENDID_QUERY = "SELECT f.* FROM FILMS AS f JOIN LIKES AS l ON f.id = l.film_id " +
+            "WHERE l.user_id = ? AND l.film_id IN (SELECT film_id FROM LIKES " +
+            "WHERE user_id = ?)";
+    private static final String FIND_MANY_BY_TITLE_AND_DIRECTOR_QUERY = "SELECT DISTINCT f.* " +
+            "FROM FILMS f LEFT JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
+            "LEFT JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
+            "WHERE d.NAME ILIKE concat('%', ?, '%') OR f.NAME ILIKE concat('%', ?, '%')";
+    private static final String FIND_MANY_BY_DIRECTOR_QUERY = "SELECT f.* " +
+            "FROM FILMS f JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
+            "JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
+            "WHERE d.NAME ILIKE concat('%', ?, '%')";
+    private static final String FIND_MANY_BY_TITLE_QUERY = "SELECT * FROM films " +
+            "WHERE name ILIKE concat('%', ?, '%')";
+
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper, Film.class);
     }
@@ -101,10 +126,9 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     @Override
     public List<Film> getFilmsByListFilmId(List<Long> filmId) {
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        String sql = "SELECT * FROM FILMS WHERE ID IN (:values)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", filmId);
-        List<Film> result = template.query(sql, parameters, new BeanPropertyRowMapper<>(Film.class));
+        List<Film> result = template.query(FIND_MANY_BY_FILMID_LIST_QUERY, parameters, new BeanPropertyRowMapper<>(Film.class));
         log.info("FilmDbStorage >------> {})", result);
         return result;
         //--------------------- awa ----------------- awa -------------------------------
@@ -114,25 +138,13 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     public List<Long> getFilmDirectorSort(long directorId, SortBy sort) {
         log.info("FilmDbStorage start findFilmById(directorId:{}, sortBy: {})", directorId, sort);
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        // Вывод всех фильмов режиссёра, отсортированных по годам.
-        String sql1 = "SELECT f.id AS film_id,fd.DIRECTOR_ID AS director_id, EXTRACT(YEAR FROM f.RELEASE_DATE) AS God " +
-                "FROM FILMS f LEFT JOIN FILM_DIRECTORS fd ON f.id = fd.FILM_ID " +
-                "WHERE fd.DIRECTOR_ID = :values " +
-                "GROUP BY f.ID,fd.DIRECTOR_ID ORDER BY god";
-
-        // Вывод всех фильмов режиссёра, отсортированных по количеству лайков.
-        String sql2 = "SELECT f.id AS film_id,fd.DIRECTOR_ID AS director_id,Count(l.user_id) AS Pop " +
-                "FROM FILMS f LEFT JOIN LIKES l ON l.FILM_ID = f.ID " +
-                "LEFT JOIN FILM_DIRECTORS fd ON f.id = fd.FILM_ID " +
-                "WHERE fd.DIRECTOR_ID = :values " +
-                "GROUP BY f.ID,fd.DIRECTOR_ID " +
-                "ORDER BY pop DESC";
-
+        //FIND_MANY_FILMID_BY_YEAR_QUERY - Вывод всех фильмов режиссёра, отсортированных по годам.
+        //FIND_MANY_FILMID_BY_POP_QUERY -  Вывод всех фильмов режиссёра, отсортированных по количеству лайков.
         String sql;
         if (sort == SortBy.YEAR) {
-            sql = sql1;
+            sql = FIND_MANY_FILMID_BY_YEAR_QUERY;
         } else {
-            sql = sql2;
+            sql = FIND_MANY_FILMID_BY_POP_QUERY;
         }
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", directorId);
         List<FilmDirector> result = template.query(sql, parameters, new BeanPropertyRowMapper<>(FilmDirector.class));
@@ -140,32 +152,22 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     public List<Film> searchFilmByTitle(String query) {
-        return jdbc.query("SELECT * FROM films WHERE name ILIKE ('%" + query + "%')", mapper);
+        return findMany(FIND_MANY_BY_TITLE_QUERY,query);
     }
 
     public List<Film> searchFilmByDirector(String query) {
-        return jdbc.query("SELECT f.* " +
-                "FROM FILMS f JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
-                "JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
-                "WHERE d.NAME ILIKE ('%" + query + "%')", mapper);
+        return findMany(FIND_MANY_BY_DIRECTOR_QUERY,query);
     }
 
     public List<Film> searchFilmByTitleAndDirector(String query) {
-        return jdbc.query("SELECT DISTINCT f.* " +
-                "FROM FILMS f LEFT JOIN FILM_DIRECTORS fd ON f.ID = fd.FILM_ID " +
-                "LEFT JOIN DIRECTORS d ON fd.DIRECTOR_ID = d.ID " +
-                "WHERE d.NAME ILIKE ('%" + query + "%')" + " OR f.NAME ILIKE ('%" + query + "%')", mapper);
+        return findMany(FIND_MANY_BY_TITLE_AND_DIRECTOR_QUERY,query,query);
     }
 
     @Override
     public List<Film> getCommonFilmUserAndHisFriend(long userId, long friendId) {
         log.info("Пришел запрос в FilmStorage получить список общих фильмов");
-
-        String sql = "SELECT f.* FROM FILMS AS f JOIN LIKES AS l ON f.id = l.film_id " +
-                "WHERE l.user_id = ? AND l.film_id IN (SELECT film_id FROM LIKES " +
-                "WHERE user_id = ?)";
         try {
-            List<Film> result = jdbc.query(sql, mapper, userId, friendId);
+            List<Film> result = jdbc.query(FIND_MANY_BY_USERID_FRIENDID_QUERY, mapper, userId, friendId);
             log.info("result {}", result);
             return result;
         } catch (Exception e) {
