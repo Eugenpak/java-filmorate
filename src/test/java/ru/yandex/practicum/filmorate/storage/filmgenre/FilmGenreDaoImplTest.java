@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FilmGenreDaoImplTest {
     private final FilmGenreDaoImpl filmGenreDao;
     private final FilmDbStorage filmDbStorage;
+    private final GenreService genreService;
 
     private List<Film> getTestFilm() {
         Film one = Film.builder().name("name фильма А").description("описание фильма А")
@@ -46,11 +48,11 @@ class FilmGenreDaoImplTest {
         filmDbStorage.deleteAll();
         Film film = filmDbStorage.create(getTestFilm().get(0));
         filmGenreDao.addSet(film.getId(),film.getGenres());
-        Set<Genre> genres = filmGenreDao.findGenresById(film.getId());
+        Set<Genre> genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(1, genres.size());
         assertEquals(1L, genres.stream().toList().get(0).getId());
         filmGenreDao.add(film.getId(),5L);
-        genres = filmGenreDao.findGenresById(film.getId());
+        genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(2, genres.size());
     }
 
@@ -59,11 +61,11 @@ class FilmGenreDaoImplTest {
         filmDbStorage.deleteAll();
         Film film = filmDbStorage.create(getTestFilm().get(1));
         filmGenreDao.addSet(film.getId(),film.getGenres());
-        Set<Genre> genres = filmGenreDao.findGenresById(film.getId());
+        Set<Genre> genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(2, genres.size());
         filmGenreDao.addSet(film.getId(),
                 Set.of(new Genre(2L,""),new Genre(5L,"")));
-        genres = filmGenreDao.findGenresById(film.getId());
+        genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(4, genres.size());
     }
 
@@ -72,10 +74,10 @@ class FilmGenreDaoImplTest {
         filmDbStorage.deleteAll();
         Film film = filmDbStorage.create(getTestFilm().get(2));
         filmGenreDao.addSet(film.getId(),film.getGenres());
-        Set<Genre> genres = filmGenreDao.findGenresById(film.getId());
+        Set<Genre> genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(1, genres.size());
         filmGenreDao.delete(film.getId(),genres.stream().toList().get(0).getId());
-        genres = filmGenreDao.findGenresById(film.getId());
+        genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(0, genres.size());
     }
 
@@ -84,7 +86,7 @@ class FilmGenreDaoImplTest {
         filmDbStorage.deleteAll();
         Film film = filmDbStorage.create(getTestFilm().get(3));
         filmGenreDao.addSet(film.getId(),film.getGenres());
-        Set<Genre> genres = filmGenreDao.findGenresById(film.getId());
+        Set<Genre> genres = genreService.findGenresByFilmId(film.getId());
         assertEquals(1, genres.size());
     }
 }
