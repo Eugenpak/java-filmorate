@@ -245,6 +245,7 @@ public class FilmService {
         Set<Genre> genres = oldFilm.getGenres();
         Film filmB = filmStorage.update(oldFilm);
         //------------------------------------------------
+        genreService.findNotValid(genres); // bug-7 (r2049402162)
         filmB.setGenres(filmGenreDao.updateFilmGenres(filmB.getId(), genres));
         mpaOpt.ifPresent(mpa -> filmB.setMpa(filmMpaDao.updateFilmMpa(filmB.getId(), mpa.getId())));
         filmB.setDirectors(updateFilmDirectors(filmB.getId(), filmB.getDirectors()));

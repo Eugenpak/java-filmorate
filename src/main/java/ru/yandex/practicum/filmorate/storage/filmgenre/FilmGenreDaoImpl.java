@@ -27,13 +27,11 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
 
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM film_genres WHERE film_id IN (?)";
 
-    private final GenreStorage genreStorage;
-
     public FilmGenreDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<Genre> mapper,
                             GenreStorage genreStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapper = mapper;
-        this.genreStorage = genreStorage;
+
     }
 
     @Override
@@ -85,7 +83,7 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
     @Override
     public Set<Genre> updateFilmGenres(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl updateFilmGenres({}, {}).", filmId, genres);
-        genreStorage.findNotValid(genres);
+        // bug-7 (r2049402162)
         deleteSetByFilmId(filmId);
         addSet(filmId,genres);
         log.trace("Фильму ID_{} обновлены жанры {}.", filmId, genres);
