@@ -36,17 +36,8 @@ public class RecommendationService {
         }
 
         // считаем количество общих лайков между пользователем и другими
-        Map<Long, Integer> commonLikesCount = new HashMap<>();
-        for (Long filmId : likedFilms) {
-            Set<Long> usersWhoLikedFilm = likeDao.getUserIdsByLikedFilm(filmId);
-            log.debug("Фильм {} лайкнули пользователи: {}", filmId, usersWhoLikedFilm);
-
-            for (Long otherUser : usersWhoLikedFilm) {
-                if (!otherUser.equals(userId)) {
-                    commonLikesCount.put(otherUser, commonLikesCount.getOrDefault(otherUser, 0) + 1);
-                }
-            }
-        }
+        Map<Long, Integer> commonLikesCount = likeDao.getCommonLikesCount(userId);
+        log.debug("Количество общих лайков с другими пользователями: {}", commonLikesCount);
 
         if (commonLikesCount.isEmpty()) {
             log.debug("Не найдено похожих пользователей {}", userId);
