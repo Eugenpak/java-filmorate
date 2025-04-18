@@ -46,8 +46,6 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
     @Override
     public void addSet(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl addSet({}, {}).", filmId, genres);
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
         //>-----------awa -----
         final List<FilmGenre> filmGengeList = new ArrayList<>();
         for (Genre el: genres) {
@@ -67,8 +65,8 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
             }
         });
         //-------------------------------------
-        stopWatch.stop();
-        log.info("FilmGenreDaoImpl addSet({}, {})-finish.(StopWatch: {} ms| rowsAdd:{})", filmId, genres,stopWatch.getTotalTimeMillis(),rowsAdd);
+
+        log.info("FilmGenreDaoImpl addSet({}, {})-finish.(rowsAdd:{})", filmId, genres,rowsAdd);
         log.trace("Фильму ID_{} добавлены жанры {}.", filmId, genres);
     }
 
