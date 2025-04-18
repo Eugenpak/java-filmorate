@@ -103,11 +103,10 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
         log.info("DirectorDbStorage start findDirectorOptById({}})",dIdL);
         List<Long> values = dIdL.stream().toList();
         //--------------------- awa ----------------- awa -------------------------------
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
         String sql = "SELECT * FROM DIRECTORS WHERE ID IN (:values)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<Director> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(Director.class));
+        List<Director> result = findMany(sql, parameters);
         log.info("DirectorDbStorage >------> {})",result);
         //--------------------- awa ----------------- awa -------------------------------
         return result;
