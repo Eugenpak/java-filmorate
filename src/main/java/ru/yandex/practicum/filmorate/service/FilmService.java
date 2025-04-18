@@ -325,9 +325,11 @@ public class FilmService {
 
     public Collection<Film> getPopularFilms(int count) {
         log.info("Start FS getPopularFilms()");
-        Collection<Film> popFilm = likeDao.findPopularFilmsId(count).stream()
-                .map(p -> filmStorage.findFilmById(p.getFilmId()).get())
-                .collect(Collectors.toList());
+        // bug-13 (r2049438536)
+        Collection<PopularFilm> pm = likeDao.findPopularFilmsId(count);
+        List<Long> idPopularFilmList = pm.stream().map(PopularFilm::getFilmId).toList();
+        Collection<Film> popFilm = filmStorage.getFilmsByListFilmId(idPopularFilmList);
+
         if (popFilm.size() < count) {
             List<Long> idPopularFilms = popFilm.stream()
                     .map(Film::getId)
