@@ -61,13 +61,11 @@ public class RecommendationService {
                 .collect(Collectors.toSet());
         log.debug("Рекомендуемые ID фильмов для пользователя {}: {}", userId, recommendedFilmIds);
 
-        List<Film> recommendedFilms = new ArrayList<>();
-        for (Long filmId : recommendedFilmIds) {
-            filmStorage.findFilmById(filmId).ifPresent(film -> {
-                log.debug("Добавлен фильм в рекомендации: {}", film);
-                recommendedFilms.add(film);
-            });
-        }
+        List<Film> recommendedFilms = recommendedFilmIds.stream()
+                .map(filmStorage::findFilmById)
+                .flatMap(Optional::stream)
+                .peek(film -> log.debug("Добавлен фильм в рекомендации: {}", film))
+                .collect(Collectors.toList());
         log.info("Рекомендации для пользователя {} собраны", userId);
         return new ArrayList<>(filmService.getFieldsFilm(recommendedFilms));
     }
