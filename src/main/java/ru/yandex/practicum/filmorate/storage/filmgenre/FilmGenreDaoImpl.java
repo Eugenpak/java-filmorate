@@ -22,6 +22,7 @@ public class FilmGenreDaoImpl  extends BaseDbStorage<FilmGenre> implements FilmG
     private static final String DELETE_BY_FILM_ID_QUERY = "DELETE FROM film_genres WHERE film_id = ?";
 
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM film_genres WHERE film_id IN (?)";
+    private static final String FIND_BY_FILM_ID_LIST_QUERY = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (:values)";
 
     public FilmGenreDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<FilmGenre> mapper) {
         super(npJdbc, mapper, FilmGenre.class);
@@ -62,11 +63,8 @@ public class FilmGenreDaoImpl  extends BaseDbStorage<FilmGenre> implements FilmG
 
     @Override
     public List<FilmGenre> getFilmGenreByFilmId(List<Long> values) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        String sql = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<FilmGenre> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmGenre.class));
+        List<FilmGenre> result = findMany(FIND_BY_FILM_ID_LIST_QUERY, parameters);
         log.info("FilmGenreDaoImpl >------> {})",result);
         return result;
         //--------------------- awa ----------------- awa -------------------------------

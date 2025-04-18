@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.like;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.PopularFilm;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
@@ -45,8 +45,8 @@ public class LikeDaoImpl extends BaseDbStorage<PopularFilm> implements LikeDao {
                     "WHERE l1.user_id = ? AND l2.user_id <> ? " +
                     "GROUP BY l2.user_id";
 
-    public LikeDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<PopularFilm> mapperPop) {
-        super(jdbcTemplate, mapperPop, PopularFilm.class);
+    public LikeDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<PopularFilm> mapperPop) {
+        super(npJdbc, mapperPop, PopularFilm.class);
     }
 
     @Override

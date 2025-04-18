@@ -19,6 +19,7 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
             " WHERE id = ?";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM directors WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM directors WHERE id = ?";
+    private static final String FIND_MANY_BY_DIRECTOR_ID_LIST_QUERY = "SELECT * FROM DIRECTORS WHERE ID IN (:values)";
 
     public DirectorDbStorage(NamedParameterJdbcTemplate npJdbc, DirectorRowMapper mapper) {
         super(npJdbc, mapper, Director.class);
@@ -71,12 +72,9 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
     public List<Long> findNotValid(Collection<Long> dIdL) {
         log.debug("DirectorDbStorage findNotValid({}).",dIdL);
         List<Long> values = dIdL.stream().toList();
-
         //--------------------- awa ----------------- awa -------------------------------
-        String sql = "SELECT * FROM DIRECTORS WHERE ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<Long> findDirectors = findMany(sql, parameters)
+        List<Long> findDirectors = findMany(FIND_MANY_BY_DIRECTOR_ID_LIST_QUERY, parameters)
                 .stream()
                 .map(Director::getId)
                 .toList();
@@ -100,10 +98,8 @@ public class DirectorDbStorage extends BaseDbStorage<Director> implements Direct
         log.info("DirectorDbStorage start findDirectorOptById({}})",dIdL);
         List<Long> values = dIdL.stream().toList();
         //--------------------- awa ----------------- awa -------------------------------
-        String sql = "SELECT * FROM DIRECTORS WHERE ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<Director> result = findMany(sql, parameters);
+        List<Director> result = findMany(FIND_MANY_BY_DIRECTOR_ID_LIST_QUERY, parameters);
         log.info("DirectorDbStorage >------> {})",result);
         //--------------------- awa ----------------- awa -------------------------------
         return result;

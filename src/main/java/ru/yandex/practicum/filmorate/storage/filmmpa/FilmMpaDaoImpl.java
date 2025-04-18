@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.filmmpa;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +18,8 @@ public class FilmMpaDaoImpl extends BaseDbStorage<FilmMpa> implements FilmMpaDao
     private static final String DELETE_QUERY = "DELETE FROM film_mpas WHERE film_id = ?" +
             " AND mpa_id = ?";
     private static final String DELETE_BY_FILM_QUERY = "DELETE FROM film_mpas WHERE film_id = ?";
+    private static final String FIND_MANY_BY_FILM_ID_LIST_QUERY = "SELECT * FROM FILM_MPAS " +
+            "WHERE FILM_ID IN (:values)";
 
     public FilmMpaDaoImpl(NamedParameterJdbcTemplate npJdbc,RowMapper<FilmMpa> mapper) {
         super(npJdbc, mapper, FilmMpa.class);
@@ -33,11 +34,8 @@ public class FilmMpaDaoImpl extends BaseDbStorage<FilmMpa> implements FilmMpaDao
 
     @Override
     public List<FilmMpa> getFilmMpaByFilmId(List<Long> values) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        String sql = "SELECT * FROM FILM_MPAS WHERE FILM_ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<FilmMpa> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmMpa.class));
+        List<FilmMpa> result = findMany(FIND_MANY_BY_FILM_ID_LIST_QUERY, parameters);
         log.info("FilmGenreDaoImpl >------> {})",result);
         return result;
         //--------------------- awa ----------------- awa -------------------------------

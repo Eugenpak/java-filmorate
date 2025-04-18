@@ -22,6 +22,8 @@ public class ReviewUserDaoImpl extends BaseDbStorage<ReviewUser> implements Revi
     private static final String FIND_USEFUL_BY_ID_QUERY = "SELECT * FROM review_users WHERE review_id = ?";
     private static final String FIND_ENTITY_BY_REVIEWID_USERID_QUERY = "SELECT * FROM review_users " +
             "WHERE review_id = ? AND user_id = ?";
+    private static final String FIND_MANY_BY_REVIEW_ID_LIST_QUERY = "SELECT * FROM review_users " +
+            "WHERE REVIEW_ID IN (:values)";
 
     public ReviewUserDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<ReviewUser> mapper) {
         super(npJdbc, mapper, ReviewUser.class);
@@ -65,11 +67,8 @@ public class ReviewUserDaoImpl extends BaseDbStorage<ReviewUser> implements Revi
 
     @Override
     public List<ReviewUser> getReviewUserByReviewId(List<Long> reviewId) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        String sql = "SELECT * FROM review_users WHERE REVIEW_ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", reviewId);
-        List<ReviewUser> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(ReviewUser.class));
+        List<ReviewUser> result = findMany(FIND_MANY_BY_REVIEW_ID_LIST_QUERY, parameters);
         log.info("LikeDaoImpl >--->> getReviewUserByReviewId(reviewId: {})",reviewId);
         return result;
         //--------------------- awa ----------------- awa -------------------------------

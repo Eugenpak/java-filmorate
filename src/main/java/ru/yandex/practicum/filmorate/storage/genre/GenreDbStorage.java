@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.genre;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,7 +18,7 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
     private static final String FIND_ALL_QUERY = "SELECT * FROM genres";
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM genres WHERE id IN " +
             "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
-
+    private static final String FIND_MANY_BY_GENRE_ID_LIST_QUERY = "SELECT * FROM GENRES WHERE ID IN (:genreId)";
 
     public GenreDbStorage(NamedParameterJdbcTemplate npJdbc, RowMapper<Genre> mapper) {
         super(npJdbc, mapper, Genre.class);
@@ -52,11 +51,9 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
 
     @Override
     public Map<Long,Genre> getGenreById(List<Long> genreId) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        String sql = "SELECT * FROM GENRES WHERE ID IN (:genreId)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("genreId", genreId);
-        List<Genre> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(Genre.class));
+
+        List<Genre> result = findMany(FIND_MANY_BY_GENRE_ID_LIST_QUERY, parameters);
         log.info("GenreDbStorage >------> {})",result);
         Map<Long,Genre> genreMap = new HashMap<>();
         result.forEach(g -> genreMap.put(g.getId(),g));

@@ -124,7 +124,6 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public List<Film> getFilmsByListFilmId(List<Long> filmId) {
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", filmId);
         List<Film> result = findMany(FIND_MANY_BY_FILMID_LIST_QUERY, parameters);
         log.info("FilmDbStorage >------> {})", result);
