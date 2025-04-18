@@ -39,9 +39,11 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
     @Override
     public void findNotValid(Set<Genre> genres) {
         log.debug("GenreDbStorage findNotValid({}).",genres);
+        // bug-10
+        Map<Long,Genre> mg = getGenreById(genres.stream().map(Genre::getId).toList());
         for (Genre el : genres) {
-            if (findGenreById(el.getId()).isEmpty()) {
-                log.debug("GenreDbStorage findNotValid({}). Жанр genres: не найден",genres);
+            if (!mg.containsKey(el.getId())) {
+                log.debug("GenreDbStorage findNotValid(). Жанр id={} не найден. genres: {}",el.getId(),genres);
                 throw new NotFoundException("Жанр genres: {id:" + el.getId() + "} не найден");
             }
         }
