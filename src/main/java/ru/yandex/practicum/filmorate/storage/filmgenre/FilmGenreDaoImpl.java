@@ -5,58 +5,45 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StopWatch;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
-
+import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 
 import java.sql.*;
 import java.util.*;
 
-
 @Repository
 @Slf4j
-public class FilmGenreDaoImpl  implements FilmGenreDao {
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Genre> mapper;
+public class FilmGenreDaoImpl  extends BaseDbStorage<FilmGenre> implements FilmGenreDao {
     private static final String INSERT_QUERY = "INSERT INTO film_genres (film_id,genre_id) " +
             "VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM film_genres WHERE film_id = ?" +
             " AND genre_id = ?";
     private static final String DELETE_BY_FILM_ID_QUERY = "DELETE FROM film_genres WHERE film_id = ?";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM genres WHERE id IN " +
-            "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
 
     private static final String FIND_BY_FILM_ID_QUERY = "SELECT * FROM film_genres WHERE film_id IN (?)";
+    private static final String FIND_BY_FILM_ID_LIST_QUERY = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (:values)";
 
-    private final GenreStorage genreStorage;
-
-    public FilmGenreDaoImpl(JdbcTemplate jdbcTemplate,RowMapper<Genre> mapper,
-                            GenreStorage genreStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.mapper = mapper;
-        this.genreStorage = genreStorage;
+    public FilmGenreDaoImpl(NamedParameterJdbcTemplate npJdbc, RowMapper<FilmGenre> mapper) {
+        super(npJdbc, mapper, FilmGenre.class);
     }
 
     @Override
     public void add(long filmId, long genreId) {
         log.debug("FilmGenreDaoImpl add({}, {}).",filmId, genreId);
-        int rowsAdd = jdbcTemplate.update(INSERT_QUERY, filmId, genreId);
+        int rowsAdd = jdbc.update(INSERT_QUERY, filmId, genreId);
         log.trace("Фильму ID_{} добавлен жанр ID_{}.", filmId, genreId);
     }
 
     @Override
     public void addSet(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl addSet({}, {}).", filmId, genres);
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
         //>-----------awa -----
         final List<FilmGenre> filmGengeList = new ArrayList<>();
         for (Genre el: genres) {
             filmGengeList.add(new FilmGenre(filmId,el.getId()));
         }
-        int[] rowsAdd = jdbcTemplate.batchUpdate("INSERT INTO film_genres (film_id,genre_id) VALUES (?, ?)",
+        int[] rowsAdd = jdbc.batchUpdate("INSERT INTO film_genres (film_id,genre_id) VALUES (?, ?)",
                 new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -70,50 +57,39 @@ public class FilmGenreDaoImpl  implements FilmGenreDao {
             }
         });
         //-------------------------------------
-        stopWatch.stop();
-        log.info("FilmGenreDaoImpl addSet({}, {})-finish.(StopWatch: {} ms| rowsAdd:{})", filmId, genres,stopWatch.getTotalTimeMillis(),rowsAdd);
+        log.info("FilmGenreDaoImpl addSet({}, {})-finish.(rowsAdd:{})", filmId, genres,rowsAdd);
         log.trace("Фильму ID_{} добавлены жанры {}.", filmId, genres);
     }
 
     @Override
     public List<FilmGenre> getFilmGenreByFilmId(List<Long> values) {
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
-        String sql = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (:values)";
-
         MapSqlParameterSource parameters = new MapSqlParameterSource("values", values);
-        List<FilmGenre> result = template.query(sql, parameters,new BeanPropertyRowMapper<>(FilmGenre.class));
+        List<FilmGenre> result = findMany(FIND_BY_FILM_ID_LIST_QUERY, parameters);
         log.info("FilmGenreDaoImpl >------> {})",result);
         return result;
         //--------------------- awa ----------------- awa -------------------------------
     }
 
     @Override
-    public Set<Genre> updateFilmGenres(long filmId, Set<Genre> genres) {
+    public void updateFilmGenres(long filmId, Set<Genre> genres) {
         log.debug("FilmGenreDaoImpl updateFilmGenres({}, {}).", filmId, genres);
-        genreStorage.findNotValid(genres);
+        // bug-7 (r2049402162)
         deleteSetByFilmId(filmId);
+        log.debug("FilmGenreDaoImpl - updateFilmGenres() -> Подоперация deleteSetByFilmId(): выполнена.");
         addSet(filmId,genres);
+        log.debug("FilmGenreDaoImpl - updateFilmGenres() ->> Подоперация addSet(): выполнена.");
         log.trace("Фильму ID_{} обновлены жанры {}.", filmId, genres);
-        return findGenresById(filmId);
     }
 
     private void deleteSetByFilmId(long filmId) {
         log.debug("FilmGenreDaoImpl deleteSetByFilmId({}).", filmId);
-        jdbcTemplate.update(DELETE_BY_FILM_ID_QUERY, filmId);
+        jdbc.update(DELETE_BY_FILM_ID_QUERY, filmId);
     }
 
     @Override
     public void delete(long filmId, long genreId) {
         log.debug("FilmGenreDaoImpl delete({}, {}).", filmId, genreId);
-        jdbcTemplate.update(DELETE_QUERY, filmId, genreId);
+        jdbc.update(DELETE_QUERY, filmId, genreId);
         log.trace("У фильма ID_{} удалён жанр ID_{}.", filmId, genreId);
-    }
-
-    @Override
-    public Set<Genre> findGenresById(long filmId) {
-        log.debug("FilmGenreDaoImpl findGenresById({}).", filmId);
-        List<Genre> list = jdbcTemplate.query(FIND_BY_ID_QUERY,
-                mapper, filmId);
-        return new HashSet<>(list);
     }
 }

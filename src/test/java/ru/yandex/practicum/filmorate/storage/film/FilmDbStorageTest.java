@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -9,10 +10,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.like.LikeDaoImpl;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,10 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmDbStorageTest {
     private final FilmDbStorage filmDbStorage;
-
-    private final UserDbStorage userStorage;
-
-    private final LikeDaoImpl likeDao;
 
     private List<User> getTestUser() {
         User user1 = User.builder().email("test-one@mail.ru").login("login-A")
@@ -96,41 +92,29 @@ class FilmDbStorageTest {
                 );
     }
 
-    /*
     @Test
-    void addLike() {
-        likeDao.deleteAllPopularFilms();
-        userStorage.delAllUsers();
+    void testSearchByTitle() {
         filmDbStorage.deleteAll();
-        Film film1 = filmDbStorage.create(getTestFilm().get(0));
-        Film film2 = filmDbStorage.create(getTestFilm().get(1));
-        User user1 = userStorage.create(getTestUser().get(0));
-        User user2 = userStorage.create(getTestUser().get(0));
-        filmDbStorage.addLike(film1.getId(),user1.getId());
-        filmDbStorage.addLike(film2.getId(),user1.getId());
-        filmDbStorage.addLike(film2.getId(),user2.getId());
-
-        List<Film> listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(2, listPop.size());
-        assertEquals(film2.getId(), listPop.get(0).getId());
+        assertEquals(0, filmDbStorage.findAll().size());
+        List<Film> allFilm = getTestFilm();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
+        filmDbStorage.create(firstFilm);
+        filmDbStorage.create(secondFilm);
+        List<Film> searchFilms = filmDbStorage.searchFilmByTitle("фильма В");
+        Assertions.assertEquals(secondFilm.getId(), searchFilms.get(0).getId());
     }
 
     @Test
-    void deleteLike() {
-        likeDao.deleteAllPopularFilms();
-        userStorage.delAllUsers();
+    void testDeleteFilm() {
         filmDbStorage.deleteAll();
-        Film film1 = filmDbStorage.create(getTestFilm().get(0));
-        User user1 = userStorage.create(getTestUser().get(0));
-
-        filmDbStorage.addLike(film1.getId(),user1.getId());
-        List<Film> listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(1, listPop.size());
-        assertEquals(film1.getId(), listPop.get(0).getId());
-        filmDbStorage.deleteLike(film1.getId(),user1.getId());
-        listPop = filmDbStorage.getPopularFilms(10);
-        assertEquals(0, listPop.size());
+        assertEquals(0, filmDbStorage.findAll().size());
+        List<Film> allFilm = getTestFilm();
+        Film firstFilm = allFilm.get(0);
+        Film secondFilm = allFilm.get(1);
+        filmDbStorage.create(firstFilm);
+        filmDbStorage.create(secondFilm);
+        filmDbStorage.delByFilmId(firstFilm.getId());
+        Assertions.assertEquals(secondFilm.getId(), new ArrayList<>(filmDbStorage.findAll()).get(0).getId());
     }
-    */
-
 }

@@ -1,6 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -11,10 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 
 @ExtendWith(MockitoExtension.class)
 class UserController2MockitoTest {
@@ -26,12 +27,12 @@ class UserController2MockitoTest {
 
     private User getTestUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(LocalDate.of(1970,1,1)).build();
+                .name("name").birthday(LocalDate.of(1970, 1, 1)).build();
     }
 
     private User getTestNotValidUser() {
         return User.builder().id(1L).email("test@mail.ru").login("login")
-                .name("name").birthday(LocalDate.of(3000,1,1)).build();
+                .name("name").birthday(LocalDate.of(3000, 1, 1)).build();
     }
 
     @Test

@@ -23,12 +23,12 @@ public class MpaService {
     }
 
     public Collection<Mpa> findAll() {
-        log.info("Start Mpa findAll()");
+        log.info("Mpa-S findAll()");
         return mpaStorage.findAll();
     }
 
     public Mpa findMpaById(long id) {
-        log.info("Start Mpa findMpaById({})",id);
+        log.info("Mpa-S findMpaById({})",id);
         Optional<Mpa> findMpa = mpaStorage.findMpaById(id);
         if (findMpa.isEmpty()) {
             throw new NotFoundException("Рейтинг с id = " + id + " не найден");
@@ -38,7 +38,16 @@ public class MpaService {
     }
 
     public Map<Long,Mpa> getMpaById(List<Long> mpaId) {
-        log.info("Start M-S getMpaById(): {}",mpaId);
+        log.info("Mpa-S getMpaById(): {}",mpaId);
         return mpaStorage.getMpaById(mpaId);
+    }
+
+    public Optional<Mpa> getValidMpaByFilmId(Long filmId) {
+        log.info("Mpa-S getMpaById(): {}",filmId);
+        List<Mpa> ml = mpaStorage.getMpasByFilmId(filmId);
+        if (ml.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(ml.get(0));
     }
 }

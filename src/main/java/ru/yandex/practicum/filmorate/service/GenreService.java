@@ -44,4 +44,10 @@ public class GenreService {
         log.info("Start G-S findNotValid(). Проверено genres!");
     }
 
+    public Set<Genre> findGenresByFilmId(long filmId) {
+        log.info("Start G-S findGenresByFilmId(filmId: {})",filmId);
+        Set<Genre> genres = genreStorage.findGenresByFilmId(filmId);
+        log.info("G-S findGenresByFilmId(). Найдено! genres: {}",genres);
+        return genres;
+    }
 }

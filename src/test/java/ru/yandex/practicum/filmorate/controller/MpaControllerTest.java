@@ -9,11 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
-import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(MpaController.class)
@@ -22,13 +21,13 @@ class MpaControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private MpaService  testMpaService;
+    private MpaService testMpaService;
 
     private List<Mpa> getMpas() {
         // Mpa: (4,'R'), (5,'NC-17');
-        Mpa one = new Mpa(1L,"G");
-        Mpa two = new Mpa(2L,"PG");
-        Mpa three = new Mpa(3L,"PG-13");
+        Mpa one = new Mpa(1L, "G");
+        Mpa two = new Mpa(2L, "PG");
+        Mpa three = new Mpa(3L, "PG-13");
         return List.of(one, two, three);
     }
 
@@ -42,7 +41,7 @@ class MpaControllerTest {
     }
 
     @Test
-    void findMpaByIdShouldReturnValidMpa() throws Exception  {
+    void findMpaByIdShouldReturnValidMpa() throws Exception {
         Mockito.when(this.testMpaService.findMpaById(1L)).thenReturn(getMpas().get(0));
 
         mvc.perform(get("/mpa/1"))

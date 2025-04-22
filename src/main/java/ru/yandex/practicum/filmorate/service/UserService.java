@@ -7,10 +7,14 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,11 +22,14 @@ import java.util.Optional;
 public class UserService {
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
+    private final FeedStorage feedStorage;
 
     @Autowired
-    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage,FriendStorage friendStorage) {
+    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage, FriendStorage friendStorage,
+                       FeedStorage feedStorage) {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
+        this.feedStorage = feedStorage;
     }
 
     public Collection<User> findAll() {
@@ -70,14 +77,14 @@ public class UserService {
         }
         User oldUser = findUserById(newUser.getId());
 
-        if (newUser.getEmail() != null && !checkEmail(newUser,findAll())) {
-                oldUser.setEmail(newUser.getEmail());
+        if (newUser.getEmail() != null && !checkEmail(newUser, findAll())) {
+            oldUser.setEmail(newUser.getEmail());
         }
         if (newUser.getLogin() != null) {
-                oldUser.setLogin(newUser.getLogin());
+            oldUser.setLogin(newUser.getLogin());
         }
         if (newUser.getName() != null) {
-                oldUser.setName(newUser.getName());
+            oldUser.setName(newUser.getName());
         }
         // если user найдена и все условия соблюдены, обновляем её содержимое
         oldUser.setBirthday(newUser.getBirthday());
@@ -101,42 +108,57 @@ public class UserService {
     }
 
     public void delUserById(long id) {
-        log.info("Start U-S delUserById({})",id);
+        log.info("Start U-S delUserById({})", id);
         boolean delUser = userStorage.delUserById(id);
         if (!delUser) {
             throw new NotFoundException("Пользователь с id = " + id + " не найден");
         }
-        log.info("Удален User delUserById({})",id);
+        log.info("Удален User delUserById({})", id);
     }
 
-    public void addFriend(long userId,long friendId) {
-        log.info("Start U-S addFriend(userId:{},friendId:{})",userId,friendId);
+    public void addFriend(long userId, long friendId) {
+        log.info("Start U-S addFriend(userId:{},friendId:{})", userId, friendId);
         final User user = findUserById(userId);
         final User friend = findUserById(friendId);
-        friendStorage.addFriend(userId,friendId);
+        friendStorage.addFriend(userId, friendId);
         log.info("Service user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> addFriend()");
+
+        log.info("Start U-S addFriend(userId:{},friendId:{})", userId, friendId);
+        feedStorage.addFeed(userId, "FRIEND", "ADD", friendId);
+        log.info("Finish U-S addFriend");
+
     }
 
-    public void removeFromFriends(long userId,long friendId) {
-        log.info("Start U-S removeFromFriends(userId:{},friendId:{})",userId,friendId);
+    public void removeFromFriends(long userId, long friendId) {
+        log.info("Start U-S removeFromFriends(userId:{},friendId:{})", userId, friendId);
         final User user = findUserById(userId);
         final User friend = findUserById(friendId);
-        friendStorage.removeFromFriends(userId,friendId);
+        friendStorage.removeFromFriends(userId, friendId);
         log.info("U-S удален друг user: '" + user.getName() + "'(id=" + userId + ") и '" + friend.getName() +
                 "'(id=" + friendId + "-> removeFromFriends()");
+
+        log.info("Start U-S removeFromFriends(userId:{},friendId:{})", userId, friendId);
+        feedStorage.addFeed(userId, "FRIEND", "REMOVE", friendId);
+        log.info("Finish U-S removeFromFriends");
     }
 
     public Collection<User> getAllFriends(long userId) {
-        log.info("Start U-S getAllFriends(userId:{})",userId);
+        log.info("Start U-S getAllFriends(userId:{})", userId);
         findUserById(userId);
         return friendStorage.getFriendsAll(userId);
     }
 
-    public Collection<User> getCommonFriends(long userId,long otherId) {
-        log.info("Start U-S getCommonFriends(userId:{},otherId:{})",userId,otherId);
+    public Collection<User> getCommonFriends(long userId, long otherId) {
+        log.info("Start U-S getCommonFriends(userId:{},otherId:{})", userId, otherId);
         findUserById(userId);
         findUserById(otherId);
-        return friendStorage.getFriendsCommon(userId,otherId);
+        return friendStorage.getFriendsCommon(userId, otherId);
+    }
+
+    public List<UserFeed> getUserFeedById(long id) {
+        log.info("Started UserStorage -----> getUserFeedById");
+        findUserById(id);
+        return feedStorage.getUserFeedById(id);
     }
 }
